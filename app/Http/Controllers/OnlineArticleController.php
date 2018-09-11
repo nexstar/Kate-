@@ -3,25 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Intervention\Image\ImageManagerStatic as Image;
+use App\imageload;
 
 class OnlineArticleController extends Controller
 {
-    private function setimg($pic, $path, $fe, $count){
-        $Cutnumber = strpos($pic,',');
-        $pic = (mb_substr($pic,( $Cutnumber + 1 ),strlen($pic),"utf-8"));
-        $imgData = base64_decode($pic);
-        $png_url = $count."_".time().'.'.$fe;
-        file_put_contents($path.$png_url, $imgData);
-        return $png_url;
-    }
-
-    protected $public_path = "";
-
-    public function __construct()
-    {
-        $this->public_path = public_path('/images/article/');
-    }
 
     public function index()
     {
@@ -35,13 +20,19 @@ class OnlineArticleController extends Controller
 
     public function store(Request $request)
     {
-
         $title            = $request->title;
         $articletype      = $request->articletype;
         $imagesrcupload   = $request->imagesrcupload;
         $imagesrcuploadFe = $request->imagesrcuploadFe;
         $contents         = $request->contents;
-        $articlepicaddress =  $this->setimg($imagesrcupload, $this->public_path, $imagesrcuploadFe,'A');
+
+        $imageload = new imageload(
+                            $imagesrcupload, $imagesrcuploadFe,
+                            'article','titlepage'
+                        );
+        $imageload->webimg();
+
+        $titlepage_img = $imageload->geturl();
 
         //模組介紹
         $gcdivtitle    = $request->gcdivtitle;
@@ -51,17 +42,25 @@ class OnlineArticleController extends Controller
         $modelpicaddress = [];
 
         for($i=0; $i<count($gcsrcfe); $i++){
-            $tmp = $this->setimg($gcsrc[$i], $this->public_path, $gcsrcfe[$i], $i);
+            $imageload = new imageload(
+                                $gcsrc[$i], $gcsrcfe[$i],'article', $i
+                            );
+            $imageload->webimg();
             array_push($modelpicaddress,
                 array(
-                    'title' => $gcdivtitle[$i], 'picaddress' => $tmp, 'contents' => $gcdivcontents[$i]
+                    'title' => $gcdivtitle[$i], 'picaddress' => $imageload->geturl(), 'contents' => $gcdivcontents[$i]
                 )
             );
         };
 
-        dd( $modelpicaddress );
-        dd( $request->all() );
-        //storage_path(). '/' . $imageName, base64_decode($image)
+        $article = [
+            'title' => $title,
+            'type' => $articletype,
+            'img' => $titlepage_img,
+            'contents' => $contents,
+            'model' => $modelpicaddress
+        ];
+        dd( $article );
     }
 
     public function show($id)

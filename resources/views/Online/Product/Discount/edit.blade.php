@@ -13,6 +13,7 @@
                     <div class="col-md-4">
                         <a href="{{ url('onlineproductdiscount') }}" class="btn btn-warning">返回</a>
                     </div>
+
                     <div class="col-md-4" style="text-align: center;">
                         <p style="font-size: 30px;">電商—商品折扣修改</p>
                     </div>

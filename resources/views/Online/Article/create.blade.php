@@ -144,10 +144,10 @@
                 reader.onload = function(e){
                     switch(type) {
                         case "modal":
-                            $("#modalimg").attr('src',e.target.result).css({ "display" : "block"});
+                            $("#modalimg").attr('src', e.target.result).css({ "display" : "block"});
                             break;
                         case "title":
-                            $("#imagesrc").attr('src',e.target.result);
+                            $("#imagesrc").attr('src', e.target.result);
                             document.getElementById("imagesrcupload").value = e.target.result;
                             break;
                     };

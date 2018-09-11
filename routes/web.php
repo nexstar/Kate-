@@ -1,4 +1,13 @@
 <?php
+//-- 20180911
+
+Route::post('/jnadbase64upload',[
+    'as' => 'jnadtoken',
+    'uses' => 'jnadtokenController@upload',
+]);
+
+//-- end of 20180911
+
 //-- 20180910
 
 Route::get('/OnlineTransactionRecordController', [
@@ -42,6 +51,7 @@ Route::get('/onlinedatacenternetworktraffic/d/{d}/m/{m}/y/{y}', [
 ]);
 
 //-- end fo 20180910
+
 //-- 20180907
 Route::get('/Online', function () {
     return view('Online.index');
