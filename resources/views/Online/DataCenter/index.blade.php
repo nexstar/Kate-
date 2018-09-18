@@ -66,8 +66,7 @@
                                         <td style="font-size: 20px;">abc@gmail.com</td>
                                         <td style="width: 15%;font-size: 20px;">男</td>
                                         <td style="width: 15%;">
-                                            <a href="#" class="btn btn-block btn-danger">刪除</a>
-                                            <a href="#" class="btn btn-block btn-info">查閱</a>
+                                            <a href="{{ route('Online.DataCenter.clientinfosheet', $i) }}" class="btn btn-block btn-info">查閱</a>
                                         </td>
                                     </tr>
                                 @endfor

@@ -1,17 +1,22 @@
 <?php
 
+//-- 20180918
+Route::get('OnlineDataCenterPage','OnlineDataCenterController@index')->name('Online.DataCenter.index');
+Route::get('OnlineDataCenterPage/clientinfosheet/{id}','OnlineDataCenterController@clientinfosheet')->name('Online.DataCenter.clientinfosheet');
+Route::get('OnlineDataCenterPage/clientinfobought/{id}','OnlineDataCenterController@clientinfobought')->name('Online.DataCenter.clientinfobought');
+
+//-- end of 20180918
+
 //-- 20180917
-
-Route::get('OnlineProductController/offline/{id}','OnlineProductController@offline')->name('Online.Product.offline');
-Route::get('OnlineProductController/online/{id}','OnlineProductController@online')->name('Online.Product.online');
-Route::get('OnlineProductController/small/{id}','OnlineProductController@smallitem')->name('Online.Product.ajaxsmall');
-
+Route::get('/OnlineProductController/offline/{id}','OnlineProductController@offline')->name('Online.Product.offline');
+Route::get('/OnlineProductController/online/{id}','OnlineProductController@online')->name('Online.Product.online');
+Route::get('/OnlineProductController/small/{id}','OnlineProductController@smallitem')->name('Online.Product.ajaxsmall');
 //-- end of 20180917
 
 //-- 20180916
-Route::put('OnlineProductDiscountController/allweb/{id}','OnlineProductDiscountController@allwebupdate')->name('Online.Product.Discount.allweb');
-Route::put('OnlineProductDiscountController/fullamount/{id}','OnlineProductDiscountController@fullamountupdate')->name('Online.Product.Discount.fullamount');
-Route::put('OnlineProductDiscountController/bonus/{id}','OnlineProductDiscountController@bonusupdate')->name('Online.Product.Discount.bonus');
+Route::put('/OnlineProductDiscountController/allweb/{id}','OnlineProductDiscountController@allwebupdate')->name('Online.Product.Discount.allweb');
+Route::put('/OnlineProductDiscountController/fullamount/{id}','OnlineProductDiscountController@fullamountupdate')->name('Online.Product.Discount.fullamount');
+Route::put('/OnlineProductDiscountController/bonus/{id}','OnlineProductDiscountController@bonusupdate')->name('Online.Product.Discount.bonus');
 //-- end of 20180916
 
 //-- 20180915
@@ -62,8 +67,6 @@ Route::get('/OnlineProductItemsController', [
 ]);
 
 Route::resource('/onlinecourse', 'OnlineCourseController');
-
-Route::resource('/onlinedatacenter', 'OnlineDataCenterController');
 
 Route::get('/onlinedatacenternetworktraffic/y', [
     'as' => 'onlinedatacenternetworktrafficY',

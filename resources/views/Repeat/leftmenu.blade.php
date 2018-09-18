@@ -16,7 +16,7 @@
                 <p style="color: black;letter-spacing: 7px;text-decoration: none;">電商網站</p>
                 <ul style="list-style: none;padding-left: 20px;">
                     <li>
-                        <a style="color:black;" href="{{ url('onlinedatacenter') }}">數據中心</a>
+                        <a style="color:black;" href="{{ url('OnlineDataCenterPage') }}">數據中心</a>
                     </li>
                     <li>
                         <a style="color:black;" href="{{ url('OnlineTransactionRecordController') }}">交易記錄</a>
