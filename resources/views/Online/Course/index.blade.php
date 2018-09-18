@@ -17,11 +17,6 @@
                         </div>
                     </div>
 
-                    <div class="row" style="margin:20px 0px;">
-                        <p>工具說明</p>
-                        <p>對於課程進行新增、修改、刪除、上架、下架方式來功能程序</p>
-                    </div>
-
                     <div class="row">
                         <div class="col-md-12" style="text-align: right;">
                             <a href="{{ url('onlinecourse/create') }}" class="btn btn-primary" style="border: 0;background-color: #80B1EA;">新增課程</a>
@@ -44,11 +39,11 @@
                                 @for($i=0;$i<10;$i++)
                                     <tr style="cursor: default;">
                                         <td style="width:20%;">
-                                            <img src="http://placehold.it/1170x613" style="width:100%;">
+                                            <img src="{{ url('images/course/course_1537007975_titlepage.jpg') }}" style="width:100%;">
                                         </td>
                                         <td style="font-size: 20px;">9999</td>
                                         <td style="font-size: 20px;">我是標題</td>
-                                        <td style="font-size: 20px;">我是時段</td>
+                                        <td style="font-size: 20px;">1月13號_18:00</td>
                                         <td style="width:15%;">
                                             <a href="#" class="btn btn-block btn-primary">上架</a>
                                             <a href="#" class="btn btn-block btn-info">下架</a>
@@ -72,9 +67,8 @@
 
 @section('scripts')
     <script type="text/javascript">
-        var _main_table = $( window ).height() - 300;
+        var _main_table = $( window ).height() - 200;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
-
     </script>
 
     <style type="text/css">

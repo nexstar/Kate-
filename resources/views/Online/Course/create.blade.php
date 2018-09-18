@@ -16,29 +16,29 @@
                 </div>
             </div>
 
-            {!! Form::open([ 'id' => 'createarticlefrom', 'method' => 'POST', 'action' => 'OnlineCourseController@store', 'files' => true ]) !!}
+            {!! Form::open([ 'id' => 'createcoursefrom', 'method' => 'POST', 'action' => 'OnlineCourseController@store', 'files' => true ]) !!}
             <div class="row" style="padding: 10px 50px 0px 50px;margin-bottom: 20px;">
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="name">課程標題</label>
-                        <input id="" name="" type="text" class="form-control">
+                        <input id="title" name="title" type="text" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="name">課程價位</label>
-                        <input id="" name="" type="number" class="form-control">
+                        <input id="money" name="money" min="1" max="99999" type="number" class="form-control">
                     </div>
                     <div class="form-group">
                         <label for="name">照片</label>
-                        <input id="" type="file" class="form-control">
+                        <input id="titlepicload" type="file" class="form-control">
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
-                        <img id="" src="http://placehold.it/1170x613" alt="" style="width: 100%;height: 210px;margin-bottom: 1px;">
-                        <input id="" name="" type="hidden" value="">
-                        <input id="" name="" type="hidden" value="">
+                        <img id="imagesrc" src="http://placehold.it/1170x613" alt="" style="width: 100%;height: 210px;margin-bottom: 1px;">
+                        <input id="imagesrcupload" name="imagesrcupload" type="hidden" value="">
+                        <input id="imagesrcuploadFe" name="imagesrcuploadFe" type="hidden" value="">
                     </div>
                 </div>
 
@@ -47,76 +47,23 @@
                 </div>
 
                 <div class="col-md-6" style="text-align: right;margin-bottom: 10px;">
-                    <button id="" type="button" class="btn btn-info">＋0</button>
+                    <button id="btnperiodadd" type="button" class="btn btn-info">＋
+                        <span id="btnperioadcount"></span>
+                    </button>
                 </div>
 
                 <div class="col-md-12">
-                    <div class="row" id="period">
-                        @for($i=0;$i<4;$i++)
-                        <div class="col-md-3" style="padding-left: 0px;padding-right: 0px;">
-                            <div class="col-md-12" style="text-align: right;">
-                                <i style="cursor: pointer;" class="fas fa-trash-alt"></i>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>月份</label>
-                                    {!!
-                                       Form::select(
-                                           'month[]',
-                                           [
-                                               0 => '1月', 1 => '2月', 2 => '3月', 3 => '4月', 4 => '5月',
-                                               5 => '6月', 6 => '7月', 7 => '8月', 8 => '9月', 9 => '10月',
-                                               10 => '11月', 11 => '12月'
-                                           ], 0,
-                                           ['class' => 'form-control']
-                                       )
-                                   !!}
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="name">日期</label>
-                                    {!!
-                                        Form::select(
-                                            'day[]',
-                                            [
-                                                0 => '1', 1 => '2', 2 => '3', 3 => '4', 4 => '5',
-                                                5 => '6', 6 => '7', 7 => '8', 8 => '9', 9 => '10',
-                                                10 => '11', 11 => '12', 12 => '13', 13 => '14', 14 => '15',
-                                                15 => '16', 16 => '17', 17 => '18', 18 => '19', 19 => '20',
-                                                20 => '21', 21 => '22', 22 => '23', 23 => '24', 24 => '25',
-                                                25 => '26', 26 => '27', 27 => '28', 28 => '29', 29 => '30',
-                                                30 => '31'
-                                            ], 0,
-                                            ['class' => 'form-control']
-                                        )
-                                    !!}
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="name">小時</label>
-                                    {!!
-                                        Form::select(
-                                            'hour[]',
-                                            [
-                                                0 => '12:00', 1 => '13:00', 2 => '13:00', 3 => '14:00', 4 => '15:00',
-                                                5 => '16:00', 6 => '17:00', 7 => '18:00', 8 => '19:00', 9 => '20:00'
-                                            ], 0,
-                                            ['class' => 'form-control']
-                                        )
-                                    !!}
-                                </div>
-                            </div>
+                    <div class="row" id="perioddiv">
+                        <div class="col-md-12">
+                            <p>請新增時段。</p>
                         </div>
-                        @endfor
                     </div>
                 </div>
 
                 <div class="col-md-12">
                     <div class="form-group">
                         <label>內容</label>
-                        <textarea id="" name="" rows="10" style="width:100%;resize:none;border-color: #dddddd;"></textarea>
+                        <textarea id="contents" name="contents" rows="10" style="width:100%;resize:none;border-color: #dddddd;"></textarea>
                     </div>
                 </div>
 
@@ -125,37 +72,7 @@
                 </div>
 
                 <div class="col-md-6" style="text-align: right;margin-bottom: 10px;">
-                    {{--<button id="addgc" class="btn btn-info">＋</button>--}}
-                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addgc">+</button>
-                </div>
-
-                <div class="modal fade" id="addgc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">增加介紹</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row" style="margin-bottom: 2px;">
-                                    <div class="col-md-6">
-                                        <input id="modaltitle" type="text" class="form-control" placeholder="標題">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input id="modalpicload" type="file" accept="image/*" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <img id="modalimg" src="http://placehold.it/1170x613" style="width: 100%;height: 210px;margin-bottom: 1px;">
-                                    <textarea style="resize: none;" id="modalcontents" rows="5" placeholder="內容" class="form-control"></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button onclick="modelsave()" type="button" class="btn btn-primary">儲存</button>
-                            </div>
-                        </div>
-                    </div>
+                    <button onclick="btnaddCoursegc()" type="button" class="btn btn-info btn-lg">+</button>
                 </div>
 
                 <div id="groupcontents">
@@ -172,6 +89,97 @@
             </div>
             {!! Form::close() !!}
 
+            <div class="modal fade" id="addperioad" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">增加時段</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>月份</label>
+                                        {!!
+                                             Form::select('modelmonth',
+                                                [
+                                                    '1月' => '1月', '2月'  => '2月',  '3月'  => '3月',  '4月'  => '4月',
+                                                    '5月' => '5月', '6月'  => '6月',  '7月'  => '7月',  '8月'  => '8月',
+                                                    '9月' => '9月', '10月' => '10月', '11月' => '11月', '12月' => '12月',
+                                                ], 0,['class' => 'form-control']
+                                             )
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="name">日期</label>
+                                        {!!
+                                             Form::select('modelday',
+                                                [
+                                                    '1號'  => '1號',   '2號' => '2號',  '3號'  => '3號',  '4號'  => '4號',  '5號'  => '5號',  '6號' => '6號',
+                                                    '7號'  => '7號',   '8號' => '8號',  '9號'  => '9號',  '10號' => '10號', '11號' => '11號', '12號' => '12號',
+                                                    '13號' => '13號', '14號' => '14號', '15號' => '15號', '16號' => '16號', '17號' => '17號', '18號' => '18號',
+                                                    '19號' => '19號', '20號' => '20號', '21號' => '21號', '22號' => '22號', '23號' => '23號', '24號' => '24號',
+                                                    '25號' => '25號', '26號' => '26號', '27號' => '27號', '29號' => '28號', '29號' => '29號', '30號' => '30號',
+                                                    '31號' => '31號'
+                                                ], 0,['class' => 'form-control']
+                                             )
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="name">小時</label>
+                                        {!!
+                                             Form::select('modelhour',
+                                                [
+                                                    '12:00' => '12:00', '13:00' => '13:00', '14:00' => '14:00',
+                                                    '15:00' => '15:00', '16:00' => '16:00', '17:00' => '17:00',
+                                                    '18:00' => '18:00', '19:00' => '19:00', '20:00' => '20:00'
+                                                ], 0,['class' => 'form-control']
+                                             )
+                                        !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button onclick="modelperioadsave()" type="button" class="btn btn-primary">儲存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="addCoursegc" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">增加介紹</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin-bottom: 2px;">
+                                <div class="col-md-6">
+                                    <input id="modaltitle" type="text" class="form-control" placeholder="標題">
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="modalpicload" type="file" accept="image/*" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <img id="modalimg" src="http://placehold.it/1170x613" style="width: 100%;height: 210px;margin-bottom: 1px;">
+                                <textarea style="resize: none;" id="modalcontents" rows="5" placeholder="內容" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button onclick="modelsave()" type="button" class="btn btn-primary">儲存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -180,6 +188,109 @@
 
 @section('scripts')
     <script type="text/javascript">
+
+        {{-- 課程價錢 change--}}
+
+        $("#money").change(function (i) {
+            if($(this).val() >= 99999){
+                alert("金額超過...");
+                $(this).val('');
+            };
+        });
+
+        {{-- 時段 --}}
+        var $sapnperiodaddcount = 4;
+        var perioadarrayid    = [];
+        var perioadarraymonth = [];
+        var perioadarrayday   = [];
+        var perioadarrayhour  = [];
+        $("#btnperioadcount").html($sapnperiodaddcount);
+
+        function modelperioadsave(){
+            let _modelmonth = $('[name=modelmonth]').val();
+            let _modelday   = $('[name=modelday]').val();
+            let _modelhour  = $('[name=modelhour]').val();
+
+            perioadarrayid.push(Date.now());
+            perioadarraymonth.push(_modelmonth);
+            perioadarrayday.push(_modelday);
+            perioadarrayhour.push(_modelhour);
+
+            $sapnperiodaddcount--;
+            $("#btnperioadcount").html($sapnperiodaddcount);
+            $("#addperioad").modal('hide');
+            update_perioad();
+        };
+
+        $("#btnperiodadd").on('click',function (i) {
+            if($sapnperiodaddcount <= 0) return;
+            $("#addperioad").modal();
+        });
+
+        function fas($removeid) {
+            let tmp_id = [];
+            for($i=0; $i<perioadarrayid.length; $i++){
+                if(perioadarrayid[$i] != $removeid){
+                    tmp_id.push(perioadarrayid[$i]);
+                };
+            };
+            perioadarrayid = tmp_id;
+            $sapnperiodaddcount++
+            $("#btnperioadcount").html($sapnperiodaddcount);
+            update_perioad();
+        };
+
+        function update_perioad() {
+            $("#perioddiv").empty('');
+
+            if(perioadarrayid.length <= 0){
+                $("#perioddiv").html('<div class="col-md-12"><p>請新增時段。</p></div>');
+            };
+
+            for($i=0; $i<perioadarrayid.length; $i++){
+                adddivperioad(perioadarrayid[$i],perioadarraymonth[$i],perioadarrayday[$i],perioadarrayhour[$i]);
+            };
+        };
+
+        function adddivperioad($time,$month,$day,$hour) {
+            let $period = "";
+            $period += '<div class="col-md-3" style="padding-left: 0px;padding-right: 0px;">';
+            $period += '<div class="col-md-10" style="left: 32%;">';
+            $period += '<p style="cursor: default;">時段</p>';
+            $period += '</div>';
+            $period += '<div class="col-md-1">';
+            $period += '<i onclick="fas('+$time+')" style="cursor: pointer;" class="fas fa-trash-alt"></i>';
+            $period += '</div>';
+            $period += '<div class="col-md-6">';
+            $period += '<div class="form-group">';
+            $period += '<label>月份</label>';
+            $period += '<p style="background-color: #dddddd;" class="form-control">'+$month+'<p>';
+            $period += '<input name="month[]" type="hidden" value="'+$month+'">';
+            $period += '</div>';
+            $period += '</div>';
+            $period += '<div class="col-md-6">';
+            $period += '<div class="form-group">';
+            $period += '<label for="name">日期</label>';
+            $period += '<p style="background-color: #dddddd;" class="form-control">'+$day+'<p>';
+            $period += '<input name="day[]" type="hidden" value="'+$day+'">';
+            $period += '</div>';
+            $period += '</div>';
+            $period += '<div class="col-md-12">';
+            $period += '<div class="form-group">';
+            $period += '<label for="name">小時</label>';
+            $period += '<p style="background-color: #dddddd;" class="form-control">'+$hour+'<p>';
+            $period += '<input name="hour[]" type="hidden" value="'+$hour+'">';
+            $period += '</div>';
+            $period += '</div>';
+            $period += '</div>';
+            $("#perioddiv").append($period);
+        };
+
+        //介紹標題
+
+        function btnaddCoursegc() {
+            $("#addCoursegc").modal();
+        };
 
         function readURL(input, type){
             if(input.files && input.files[0]){
@@ -229,7 +340,7 @@
                     if(contents == ""){
                         alert("內容尚未填寫");
                     }else{
-                        $("#addgc").modal('hide');
+                        $("#addCoursegc").modal('hide');
                         $("#modalpicload").val('');
                         $("#modaltitle").val("");
                         $("#modalimg")[0].src = "http://placehold.it/1170x613";
@@ -319,22 +430,22 @@
                     if(_contents == ""){
                         alert("內容標題未填");
                     }else{
-                        if(arraygc_id.length <= 0){
-                            alert("文章介紹上傳");
+                        if(perioadarrayid.length <= 0){
+                            alert("時段未填");
                         }else{
-                            if(confirm("確定新增文章??")){
-                                $("#createarticlefrom").submit();
+                            if(arraygc_id.length <= 0){
+                                alert("課程介紹未上傳");
+                            }else{
+                                if(confirm("確定新增課程??")){
+                                    $("#createcoursefrom").submit();
+                                };
                             };
-                        };
+                        }
                     };
                 };
             };
 
         };
-
-        // function gcpen($id){
-        //     console.log($("#gcpen"+$id));
-        // };
 
     </script>
 

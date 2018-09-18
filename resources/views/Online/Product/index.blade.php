@@ -35,7 +35,7 @@
                         <div class="col-md-3">
                             <a href="#" style="float: right;width: 30%;background-color: #4A90E2;border-color: #4A90E2;" class="btn btn-success">搜尋</a>
                             <input style="width: 70%;float: right;" type="text" placeholder="檢索: 編號,名稱" class="form-control">
-                            <div style="clear: both;"></div
+                            <div style="clear: both;"></div>
                         </div>
                     </div>
 
@@ -53,24 +53,35 @@
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                @for($i=0;$i<10;$i++)
-                                    <tr style="cursor: default;">
-                                        <td style="width:20%;">
-                                            <img src="http://placehold.it/1170x613" style="width:100%;">
-                                        </td>
-                                        <td style="font-size: 20px;">12312213131</td>
-                                        <td style="font-size: 20px;">我是名稱</td>
-                                        <td style="font-size: 20px;">我是大項</td>
-                                        <td style="font-size: 20px;">我是小項</td>
-                                        <td style="width:15%;">
-                                            <a href="#" class="btn btn-block btn-success">網站</a>
-                                            <a href="{{ route('onlinetransactionrecordcontroller.info', $i) }}" class="btn btn-block btn-info">資訊</a>
-                                            <a href="#" class="btn btn-block btn-primary">上架</a>
-                                            <a href="#" class="btn btn-block btn-info" style="background-color: #C10066;border-color: #C10066;">下架</a>
-                                            <a href="#" class="btn btn-block btn-danger">刪除</a>
-                                            <a href="{{ route('onlineproduct.edit', $i) }}" class="btn btn-block btn-warning">修改</a>
-                                        </td>
-                                    </tr>
+                                @for($i=0;$i<count($TmpDB);$i++)
+                                    @if( ((int)$TmpDB[$i]['inventory']) > 5 )
+                                        <tr style="cursor: default;">
+                                            <td style="width:20%;">
+                                                <img src="{{ $TmpDB[$i]['src'] }}" style="width:100%;">
+                                            </td>
+                                            <td style="font-size: 20px;">{{ $TmpDB[$i]['id'] }}</td>
+                                            <td style="font-size: 20px;">{{ $TmpDB[$i]['title'] }}</td>
+                                            <td style="font-size: 20px;">{{ $TmpDB[$i]['pdbigitem'] }}</td>
+                                            <td style="font-size: 20px;">{{ $TmpDB[$i]['pdsmallitem'] }}</td>
+                                            <td style="width:15%;">
+                                                <a target="_blank" href=".../{{$TmpDB[$i]['id']}}" class="btn btn-block btn-success">網站</a>
+                                                <a href="{{ route('onlinetransactionrecordcontroller.info', $TmpDB[$i]['id']) }}" class="btn btn-block btn-info">資訊</a>
+                                                @if( ((int)$TmpDB[$i]['onoff']) )
+                                                    <a href="{{ route('Online.Product.offline','1') }}" class="btn btn-block btn-info" style="background-color: #C10066;border-color: #C10066;">下架</a>
+                                                @else
+                                                    <a href="{{ route('Online.Product.online', '0') }}" class="btn btn-block btn-primary" style="margin-top: 5px;">上架</a>
+                                                @endif
+                                                {!! Form::open([
+                                                    'id' => ('rmpdfrom'.$TmpDB[$i]['id']), 'method' => 'DELETE',
+                                                    'action' => ['OnlineProductController@destroy',$TmpDB[$i]['id']],
+                                                    ])
+                                                !!}
+                                                    <button onclick="btnrmpd('{{ $TmpDB[$i]['id'] }}')" style="margin-top: 5px;" type="button" class="btn btn-block btn-danger">刪除</button>
+                                                {!! Form::close() !!}
+                                                <a href="{{ route('onlineproduct.edit', $TmpDB[$i]['id']) }}" style="margin-top: 5px;" class="btn btn-block btn-warning">修改</a>
+                                            </td>
+                                        </tr>
+                                    @endif
                                 @endfor
                                 </tbody>
                             </table>
@@ -89,7 +100,11 @@
     <script type="text/javascript">
         var _main_table = $( window ).height() - 300;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
-
+        function btnrmpd($id) {
+          if(confirm("確定要刪除??")){
+              $("#rmpdfrom"+$id).submit();
+          };
+        };
     </script>
 
     <style type="text/css">

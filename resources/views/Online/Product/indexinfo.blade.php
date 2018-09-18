@@ -23,25 +23,22 @@
                     </div>
                     <div style="margin-left: 80px;">
                         <div class="col-md-4">
-                            <h4>價格:300</h4>
+                            <h4>價格: {{ $TmpDB['money'] }}</h4>
                         </div>
                         <div class="col-md-4">
-                            <h4>加購價格:300</h4>
+                            <h4>紅利: {{ $TmpDB['bouns'] }}</h4>
                         </div>
                         <div class="col-md-4">
-                            <h4>紅利:300</h4>
+                            <h4>庫存: {{ $TmpDB['inventory'] }}</h4>
                         </div>
                         <div class="col-md-4">
-                            <h4>庫存:300</h4>
+                            <h4>購買次數: {{ $TmpDB['buycount'] }}</h4>
                         </div>
                         <div class="col-md-4">
-                            <h4>購買次數:300</h4>
+                            <h4>觀看次數: {{ $TmpDB['seecount'] }}</h4>
                         </div>
                         <div class="col-md-4">
-                            <h4>觀看次數:300</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <h4>上架日期:2018/12/32</h4>
+                            <h4>上架日期: {{ $TmpDB['date'] }}</h4>
                         </div>
                     </div>
                 </div>
@@ -51,9 +48,9 @@
                     </div>
 
                     <div style="margin-left: 80px;">
-                        @for($i=0; $i<20; $i++)
+                        @for($i=0; $i<count($TmpType); $i++)
                         <div class="col-md-3">
-                            <h4>分類A</h4>
+                            <h4>{{ $TmpType[$i]['name'] }}</h4>
                         </div>
                         @endfor
                     </div>
@@ -65,12 +62,13 @@
                     </div>
 
                     <div style="margin-left: 80px;">
-                        @for($i=0; $i<3; $i++)
+                        @for($i=0; $i<count($TmpDB['addpd']); $i++)
                             <div class="col-md-4" style="text-align: center;">
                                 <div class="thumbnail">
                                     <span>第{{ $i+1 }}個加購</span>
-                                    <img style="margin: 5px 0px;width: 100%;" src="http://placehold.it/1170x613" alt="#">
-                                    <span>商品名稱</span>
+                                    <img style="margin: 5px 0px;width: 100%;" src="{{ $TmpDB['addpd'][$i]['src'] }}" alt="#">
+                                    <p>名稱: {{ $TmpDB['addpd'][$i]['name'] }}</p>
+                                    <p>加購價: {{ $TmpDB['addpd'][$i]['money'] }}</p>
                                 </div>
                             </div>
                         @endfor

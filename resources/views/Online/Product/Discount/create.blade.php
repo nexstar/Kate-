@@ -18,21 +18,21 @@
                         </div>
 
                         <div class="col-md-12">
-                            {!! Form::open(['method' => 'POST', 'files' => true ]) !!}
+                            {!! Form::open(['id' => 'pddiscountform','method' => 'POST', 'action' => 'OnlineProductDiscountController@store','files' => true ]) !!}
 
                             <div class="row">
 
                                 <div class="col-md-12" style="height: 97px;">
                                     <div class="form-group">
                                         <label>名稱</label>
-                                        <input value="" id="" name="" type="text" class="form-control">
+                                        <input id="pddiscountname" name="pddiscountname" type="text" class="form-control">
                                     </div>
                                 </div>
 
                                 <div class="col-md-12" style="height: 97px;">
                                     <div class="form-group">
                                         <label>折扣數</label>
-                                        <input value="" id="" name="" type="text" class="form-control">
+                                        <input id="pddiscountcount" name="pddiscountcount" max="100" min="1"  type="number" class="form-control">
                                     </div>
                                 </div>
 
@@ -45,23 +45,19 @@
                                         <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
-                                                    <input type="checkbox" name="addcheckboxgroup[]" value="">
+                                                    <input type="checkbox" name="addcheckboxgroup[]" value="{{ $i }}">
                                                 </div>
-                                                <input value="商品名稱" style="text-align: center;" type="text" class="form-control" disabled="true">
+                                                <input value="商品名稱{{$i}}" style="text-align: center;" type="text" class="form-control" disabled="true">
                                             </div>
                                         </div>
                                     @endfor
                                 </div>
                             </div>
-
                             <div class="row">
-
                                 <div class="col-md-12" style="text-align: right;">
-                                    <button type="button" class="btn btn-primary">送出</button>
+                                    <button onclick="btnpddiscount()" type="button" class="btn btn-primary">送出</button>
                                 </div>
-
                             </div>
-
                             {!! Form::close() !!}
                         </div>
                     </div>
@@ -76,6 +72,18 @@
 @section('scripts')
     <script type="text/javascript">
 
+        function btnpddiscount(){
+            if(confirm("確定新增折扣??")){
+                $("#pddiscountform").submit();
+            };
+        };
+
+        $("#pddiscountcount").change(function () {
+            if($(this).val() > 100){
+                alert("超過");
+                $(this).val('').focus();
+            };
+        });
     </script>
 @endsection
 

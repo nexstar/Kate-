@@ -18,13 +18,13 @@ class jnadtokenController extends Controller
     ];
 
     public function upload(Request $request){
-        $_userid = $request->userid;
-        $_type   = $request->type;
-        $_base64 = $request->base64;
+
+        $_ajaxuser = $request->_ajaxuser;
+        $_ajaxjustbase64 = $request->_ajaxjustbase64;
 
         $resp_status = $this->fail;
-        if(strlen($_base64) > 10){
-            $imageload = new imageload($_base64,'png',$_type,'');
+        if(strlen($_ajaxjustbase64) > 10){
+            $imageload = new imageload($_ajaxjustbase64,'png', $_ajaxuser,'');
             $imageload->Community();
             $this->success['url'] = $imageload->geturl();
             $resp_status = $this->success;

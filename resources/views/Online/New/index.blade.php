@@ -16,11 +16,6 @@
                     </div>
                 </div>
 
-                <div class="row" style="margin:20px 0px;">
-                    <p>工具說明</p>
-                    <p>店面曝光的新聞</p>
-                </div>
-
                 <div class="row" style="margin-bottom: 20px;">
                     <div class="col-md-12" style="text-align: right;">
                         <a href="{{ url('onlinenew/create') }}" class="btn btn-primary" style="border: 0;background-color: #80B1EA;">新增新聞</a>
@@ -31,9 +26,9 @@
                     @for($i=0; $i<6; $i++)
                         <div class="col-md-4" style="text-align: center;">
                             <div class="thumbnail">
-                                <p style="font-size: 20px;">2018/12/32</p>
+                                <p style="font-size: 20px;">2018/9/13, 11:51:00 PM</p>
                                 <span>{{ $i+1 }}.新聞</span>
-                                <img style="margin: 5px 0px;width: 100%;" src="http://placehold.it/1170x613" alt="#">
+                                <img style="margin: 5px 0px;width: 100%;" src="{{ url('images/new/new_1536923234_left.jpg') }}">
                                 <a href="{{ route('onlinenew.edit', $i) }}" class="btn btn-block btn-warning">修改</a>
                             </div>
                         </div>

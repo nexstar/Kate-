@@ -16,22 +16,46 @@
                     </div>
                 </div>
 
-                <div class="row" style="margin:20px 0px;">
-                    <p>工具說明</p>
-                    <p>來自朋友對於本店的支持與喜愛</p>
-                </div>
-
                 <div class="row">
                     @for($i=0; $i<9; $i++)
+                        {!! Form::open([ 'id' => ('editfriendfrom'.$i), 'method' => 'PUT', 'action' => ['OnlineFriendController@update', $i] ]) !!}
                         <div class="col-md-4" style="text-align: center;">
                             <div class="thumbnail">
                                 <span>{{ $i+1 }}.朋友們的肯定</span>
-                                <img style="margin: 5px 0px;width: 100%;" src="http://placehold.it/1170x613" alt="#">
-                                <button class="btn btn-block btn-warning">修改</button>
+                                <img style="margin: 5px 0px;width: 100%;" src="{{ url('images/friend/friend_1536903625_0.jpg') }}" alt="#">
+                                <input id="friendsrc{{$i}}" name="friendsrc"  type="hidden" value="#">
+                                <input id="friendfe{{$i}}" name="friendfe" type="hidden" value="#">
+                                <button onclick="editFriend({{$i}})" type="button" class="btn btn-block btn-warning">修改</button>
                             </div>
                         </div>
+                        {!! Form::close() !!}
                     @endfor
+                    <div class="modal fade" id="editfriend" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">修改朋友們的肯定</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row" style="margin-bottom: 2px;">
+                                        <div class="col-md-12">
+                                            <input id="modalpicload" type="file" accept="image/*" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <img id="modalimg" src="http://placehold.it/1170x613" style="width: 100%;height: 210px;margin-bottom: 1px;">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button onclick="yeseditfriend()" type="button" class="btn btn-primary">進行更換</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
 
             </div>
 
@@ -43,6 +67,37 @@
 @section('scripts')
     <script type="text/javascript">
         $("#main_left").css({ "height" : ($( document ).height()) });
+
+        var $editid;
+        function editFriend($id) {
+            $("#editfriend").modal();
+            $editid = $id;
+        };
+
+        function yeseditfriend() {
+            if(confirm("確定修改朋友的肯定？？")){
+                $("#editfriendfrom" + $editid).submit();
+            };
+        };
+
+        function readURL(input){
+            if(input.files && input.files[0]){
+                let reader = new FileReader();
+                reader.onload = function(e){
+                    $("#modalimg").attr('src', e.target.result);
+                    document.getElementById( ("friendsrc" + $editid) ).value = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            };
+        };
+
+        $("#modalpicload").change(function () {
+            readURL(this);
+            document.getElementById( ("friendfe" + $editid) ).value = $(this).val().split('.').pop();
+            // $("#modalpicload").val('');
+            // $("#modalimg")[0].src = "http://placehold.it/1170x613";
+        });
+
     </script>
 
     <style type="text/css">

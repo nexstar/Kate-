@@ -23,47 +23,60 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="name">全館折扣</label>
+                                <label for="name">全館折扣(%)</label>
+                                {!! Form::open([
+                                    'id' => 'allweb', 'method' => 'PUT',
+                                    'action' => ['OnlineProductDiscountController@allwebupdate','1'],
+                                    'files' => true ])
+                                !!}
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <input type="text" value="" class="form-control">
+                                        <input disabled id="allwebipnut" name="allwebipnut" type="number" min="1" max="100" value="" class="form-control">
                                     </div>
                                     <div class="col-md-4">
-                                        <button class="btn btn-block btn-primary">修改</button>
+                                        <button id="editallweb" onclick="btneditallweb()" type="button" class="btn btn-block btn-primary">修改</button>
+                                        <button id="updateallweb" onclick="btnupdateallweb()" style="display: none;margin: 0px;" type="button" class="btn btn-block btn-warning">確定修改</button>
                                     </div>
                                 </div>
+                                {!! Form::close() !!}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="name">滿額折扣</label>
+                                <label for="name">滿額折扣(%)</label>
+                                {!! Form::open(['id' => 'fullamount', 'method' => 'PUT', 'action' => ['OnlineProductDiscountController@fullamountupdate','1'] ]) !!}
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <input type="text" value="" class="form-control" placeholder="滿額金">
+                                        <input id="fullinput" name="fullinput" disabled type="number" value="" max="9999" min="1" class="form-control" placeholder="滿額金">
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="text" value="" class="form-control" placeholder="折數">
+                                        <input id="cutinput" name="cutinput" disabled type="number" value="" max="100" min="1" class="form-control" placeholder="折數">
                                     </div>
                                     <div class="col-md-4">
-                                        <button class="btn btn-block btn-primary">修改</button>
+                                        <button id="editfullamount" onclick="btneditfullamount()" type="button" class="btn btn-block btn-primary">修改</button>
+                                        <button id="updatefullamount" onclick="btnupdatefullamount()" style="display: none;margin: 0px;" type="button" class="btn btn-block btn-warning">確定修改</button>
                                     </div>
                                 </div>
+                                {!! Form::close() !!}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="name">紅利比例</label>
+                                {!! Form::open(['id' => 'bonus', 'method' => 'PUT' ,'action' => ['OnlineProductDiscountController@bonusupdate','1'] ]) !!}
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <input type="text" value="" class="form-control" placeholder="金額">
+                                        <input disabled id="moneyinput" name="moneyinput" type="number" max="99999" min="1" value="" class="form-control" placeholder="金額">
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="text" value="" class="form-control" placeholder="比例">
+                                        <input disabled id="rateinput" name="rateinput" type="number" max="100" min="1" value="" class="form-control" placeholder="比例">
                                     </div>
                                     <div class="col-md-4">
-                                        <button class="btn btn-block btn-primary">修改</button>
+                                        <button id="editbouns" onclick="btnbonus()" type="button" class="btn btn-block btn-primary">修改</button>
+                                        <button id="updatebouns" onclick="btnupdatebouns()" style="display: none;margin: 0px;" type="button" class="btn btn-block btn-warning">確定修改</button>
                                     </div>
                                 </div>
+                                {!! Form::close() !!}
                             </div>
                         </div>
                     </div>
@@ -86,14 +99,24 @@
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                @for($i=0;$i<10;$i++)
+                                @for($i=0;$i<count($tmp);$i++)
                                     <tr style="cursor: default;">
-                                        <td style="width:20%;font-size: 20px;">我是名稱</td>
-                                        <td style="width:20%;font-size: 20px;">20%</td>
-                                        <td style="width:20%;font-size: 20px;">9999</td>
+                                        <td style="width:20%;font-size: 20px;">{{$tmp[$i]['name']}}</td>
+                                        <td style="width:20%;font-size: 20px;">{{$tmp[$i]['discount']}}%</td>
+                                        <td style="width:20%;font-size: 20px;">
+                                            @foreach($tmp[$i]['checkgroup'] as $grplist)
+                                                <p style="margin: 0px;">{{$grplist}}</p>
+                                            @endforeach
+                                        </td>
                                         <td style="width:10%;">
-                                            <a href="#" class="btn btn-block btn-danger">刪除</a>
-                                            <a href="{{ route('onlineproductdiscount.edit', $i) }}" class="btn btn-block btn-warning">修改</a>
+                                            {!! Form::open([
+                                                'id' => ('rmdiscountform'.$tmp[$i]['id']), 'method' => 'DELETE',
+                                                'action' => ['OnlineProductDiscountController@destroy', $tmp[$i]['id']]
+                                                ])
+                                            !!}
+                                                <button onclick="rmdiscount('{{$tmp[$i]['id']}}')" type="button" class="btn btn-block btn-danger">刪除</button>
+                                            {!! Form::close() !!}
+                                            <a href="{{ route('onlineproductdiscount.edit', $i) }}" style="margin-top: 5px;" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
                                 @endfor
@@ -114,6 +137,111 @@
     <script type="text/javascript">
         var _main_table = $( window ).height() - 300;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
+
+        $("#moneyinput").change(function () {
+            if($(this).val() <=0 ){
+                alert("紅利金不能底於零");
+                $(this).val('');
+            }else{
+                if($(this).val() >=9999 ){
+                    alert("紅利金不能高於9999");
+                    $(this).val('');
+                };
+            };
+        });
+
+        $("#rateinput").change(function () {
+            if($(this).val() <=0 ){
+                alert("比例不能底於零");
+                $(this).val('');
+            }else{
+                if($(this).val() >=100 ){
+                    alert("比例不能高於100");
+                    $(this).val('');
+                };
+            };
+        });
+
+        function btnbonus(){
+            $("#editbouns").css({ "display" : "none" });
+            $("#updatebouns").css({ "display" : "block" });
+            document.getElementById('moneyinput').disabled = false;
+            document.getElementById('rateinput').disabled = false;
+        };
+
+        function btnupdatebouns(){
+            if(confirm("確定修改??")){
+                $("#bonus").submit();
+            };
+        };
+
+
+        $("#fullinput").change(function () {
+            if($(this).val() <=0 ){
+                alert("滿額金不能底於零");
+                $(this).val('');
+            }else{
+                if($(this).val() >=9999 ){
+                    alert("滿額金不能高於9999");
+                    $(this).val('');
+                };
+            };
+        });
+
+        $("#cutinput").change(function () {
+            if($(this).val() <=0 ){
+                alert("折扣數不能底於零");
+                $(this).val('');
+            }else{
+                if($(this).val() >=100 ){
+                    alert("折扣數不能高於100");
+                    $(this).val('');
+                };
+            };
+        });
+
+        function btneditfullamount(){
+            $("#editfullamount").css({ "display" : "none" });
+            $("#updatefullamount").css({ "display" : "block" });
+            document.getElementById('fullinput').disabled = false;
+            document.getElementById('cutinput').disabled = false;
+        };
+
+        function btnupdatefullamount(){
+            if(confirm("確定修改??")){
+                $("#fullamount").submit();
+            };
+        };
+
+        $("#allwebipnut").change(function () {
+            if($(this).val() <=0 ){
+                alert("全館折扣不能底於零");
+                $(this).val('');
+            }else{
+                if($(this).val() >=100 ){
+                    alert("全館折扣不能高於100");
+                    $(this).val('');
+                };
+            };
+        });
+
+        function btneditallweb(){
+            $("#editallweb").css({ "display" : "none" });
+            $("#updateallweb").css({ "display" : "block" });
+            document.getElementById('allwebipnut').disabled = false;
+        };
+
+        function btnupdateallweb() {
+            if(confirm("確定修改??")){
+                $("#allweb").submit();
+            };
+        };
+
+        function rmdiscount($id) {
+            if(confirm("確定刪除??")){
+                $("#rmdiscountform"+$id).submit();
+            };
+        };
 
     </script>
 

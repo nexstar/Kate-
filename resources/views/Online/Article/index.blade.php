@@ -39,11 +39,11 @@
                                 @for($i=0;$i<10;$i++)
                                     <tr style="cursor: default;">
                                         <td style="width:20%;">
-                                            <img src="http://placehold.it/1170x613" style="width:100%;">
+                                            <img src="{{ url('images/article/article_1536802451_titlepage.jpg') }}" style="width:100%;">
                                         </td>
                                         <td style="font-size: 20px;">9999</td>
-                                        <td style="font-size: 20px;">我是標題</td>
-                                        <td style="font-size: 20px;">我是類型</td>
+                                        <td style="font-size: 20px;">文章標題測試A</td>
+                                        <td style="font-size: 20px;">春</td>
                                         <td style="width:15%;">
                                             <a href="#" class="btn btn-block btn-primary">上架</a>
                                             <a href="#" class="btn btn-block btn-info">下架</a>

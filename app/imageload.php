@@ -17,7 +17,7 @@ class imageload extends Model
     {
         $this->public_path = public_path('/images/');
         $Cutnumber = strpos($base64,',');
-        $pic = (mb_substr($base64,( $Cutnumber + 1 ),strlen($base64),"utf-8"));
+        $pic = (mb_substr($base64,( $Cutnumber + 1 ), strlen($base64),"utf-8"));
         $this->base64decode = base64_decode($pic);
 
         $this->type = $type;
@@ -44,9 +44,15 @@ class imageload extends Model
     public function Community(){
         $this->url = $this->type.'_'.time().'_'.$this->fe;
         $this->savepublicimage(
-            $this->public_path.$this->type.'/'.$this->geturl(),
+            $this->public_path.'/greenpet/'.$this->geturl(),
             $this->base64decode
         );
+    }
+
+    public static function upimgpath($path){
+        $data = file_get_contents($path);
+        $base64 = 'data:image/png;base64,'.base64_encode($data);
+        return $base64;
     }
 
 }

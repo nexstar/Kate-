@@ -22,19 +22,19 @@
                         </div>
 
                         <div class="col-md-12">
-                            {!! Form::open(['method' => 'POST', 'files' => true ]) !!}
-
+                            {!! Form::open([
+                                'id' => 'producttypeform','method' => 'POST',
+                                'action' => 'OnlineProductTpyeController@store', 'files' => true
+                                ])
+                            !!}
                             <div class="row">
-
                                 <div class="col-md-12" style="height: 97px;">
                                     <div class="form-group">
                                         <label>名稱</label>
-                                        <input value="" id="" name="" type="text" class="form-control">
+                                        <input value="" id="name" name="name" type="text" class="form-control">
                                     </div>
                                 </div>
-
                             </div>
-
                             <div class="row" style="margin:0px 0px 10px 0px">
                                 <label>勾選商品</label>
                                 <div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 300px;border: 1px solid #dddddd;">
@@ -42,23 +42,19 @@
                                     <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
                                         <div class="input-group">
                                             <div class="input-group-addon">
-                                                <input type="checkbox" name="addcheckboxgroup[]" value="">
+                                                <input type="checkbox" name="addcheckboxgroup[]" value="{{$i}}">
                                             </div>
-                                            <input value="商品名稱" style="text-align: center;" type="text" class="form-control" disabled="true">
+                                            <input value="商品名稱{{$i}}" style="text-align: center;" type="text" class="form-control" disabled="true">
                                         </div>
                                     </div>
                                     @endfor
                                 </div>
                             </div>
-
                             <div class="row">
-
                                 <div class="col-md-12" style="text-align: right;">
-                                    <button type="button" class="btn btn-primary">送出</button>
+                                    <button onclick="btnproducttype()" type="button" class="btn btn-primary">送出</button>
                                 </div>
-
                             </div>
-
                             {!! Form::close() !!}
                         </div>
                     </div>
@@ -73,7 +69,26 @@
 
 @section('scripts')
     <script type="text/javascript">
+        function btnproducttype() {
+            let checkcount = 0;
+            $("input:checkbox:checked[name='addcheckboxgroup[]']").each(function(index) {
+                checkcount++;
+            });
 
+            let _name = $('[name="name"]').val();
+
+            if(_name == ""){
+                alert("名稱不能為空");
+            }else{
+                if(checkcount <=0 ){
+                    alert("商品尚未勾選");
+                }else{
+                    if(confirm("確定新增")){
+                        $("#producttypeform").submit();
+                    };
+                };
+            };
+        };
     </script>
 @endsection
 

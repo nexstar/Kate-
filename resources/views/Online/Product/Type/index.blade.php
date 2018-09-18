@@ -32,21 +32,33 @@
                                 <thead>
                                 <tr>
                                     <th>名稱</th>
+                                    <th>商品名稱</th>
                                     <th>數量</th>
                                     <th>動作</th>
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                @for($i=0;$i<10;$i++)
+                                    @for($i=0;$i<count($tmpdb);$i++)
                                     <tr style="cursor: default;">
-                                        <td style="width:20%;font-size: 20px;">我是名稱</td>
-                                        <td style="width:20%;font-size: 20px;">9999</td>
+                                        <td style="width:20%;font-size: 20px;">{{ $tmpdb[$i]['name'] }}</td>
+                                        <td style="width:20%;font-size: 20px;">{{ count($tmpdb[$i]['addcheckboxgroup']) }}</td>
+                                        <td style="width:20%;font-size: 20px;">
+                                            @for($j=0;$j<count($tmpdb[$i]['addcheckboxgroup']);$j++)
+                                                <p>{{ $tmpdb[$i]['addcheckboxgroup'][$j]['name'] }}</p>
+                                            @endfor
+                                        </td>
                                         <td style="width:10%;">
-                                            <a href="#" class="btn btn-block btn-danger">刪除</a>
-                                            <a href="{{ route('onlineproducttpye.edit', $i) }}" class="btn btn-block btn-warning">修改</a>
+                                            {!! Form::open([
+                                                'id' => ('rmproducttype'.$tmpdb[$i]['id']), 'method' => 'DELETE',
+                                                'action' => ['OnlineProductTpyeController@destroy', $tmpdb[$i]['id'] ]
+                                                ])
+                                            !!}
+                                                <button onclick="btnrmproducttype('{{ $tmpdb[$i]['id'] }}')" type="button" class="btn btn-block btn-danger">刪除</button>
+                                            {!! Form::close() !!}
+                                            <a href="{{ route('onlineproducttpye.edit', $tmpdb[$i]['id'] ) }}" style="margin-top: 5px;" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
-                                @endfor
+                                    @endfor
                                 </tbody>
                             </table>
                         </div>
@@ -64,6 +76,12 @@
     <script type="text/javascript">
         var _main_table = $( window ).height() - 300;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
+
+        function btnrmproducttype($id) {
+            if(confirm("確定刪除??")){
+                $("#rmproducttype"+$id).submit();
+            };
+        };
 
     </script>
 
