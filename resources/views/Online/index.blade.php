@@ -22,18 +22,18 @@
                             <label>幻燈片</label>
                         </div>
                     </div>
-                    @for($i=1; $i<=3; $i++)
-                    {!! Form::open(['id' => ('slide'.$i), 'method' => 'PUT', 'action' => ['OnlineController@slide', $i] ]) !!}
-                    <div class="col-md-4" style="text-align: center;">
-                        <div class="thumbnail">
-                            <span>{{$i}}號.幻燈片</span>
-                            <img style="margin: 5px 0px;width: 100%;" src="http://placehold.it/1170x613" alt="#">
-                            <input id="slidesrc{{$i}}" name="slidesrc" type="hidden" value="{{$i}}">
-                            <input id="slidefe{{$i}}" name="slidefe" type="hidden" value="{{$i}}">
-                            <button onclick="slidejump({{$i}})" type="button" class="btn btn-block btn-warning">修改</button>
-                        </div>
-                    </div>
-                    {!! Form::close() !!}
+                    @for($i=0;$i<count($slidesArray);$i++)
+                        {!! Form::open(['id' => ('slide'.($slidesArray[$i]['id'])), 'method' => 'PUT', 'action' => ['OnlineController@slide', ($slidesArray[$i]['id'])] ]) !!}
+                            <div class="col-md-4" style="text-align: center;">
+                                <div class="thumbnail">
+                                    <span>{{ $i+1 }}號.幻燈片</span>
+                                    <img style="margin: 5px 0px;width: 100%;" src="{{ ($slidesArray[$i]['src']) }}" alt="#">
+                                    <input id="slidesrc{{ ($slidesArray[$i]['id']) }}" name="slidesrc" type="hidden" value="{{ ($slidesArray[$i]['src']) }}">
+                                    <input id="slidefe{{ ($slidesArray[$i]['id']) }}" name="slidefe" type="hidden" value="{{ ($slidesArray[$i]['fe']) }}">
+                                    <button onclick="slidejump('{{ ($slidesArray[$i]['id']) }}')" type="button" class="btn btn-block btn-warning">修改</button>
+                                </div>
+                            </div>
+                        {!! Form::close() !!}
                     @endfor
                     <div class="modal fade" id="slidemodel" tabindex="-1" role="dialog">
                         <div class="modal-dialog" role="document">
@@ -61,56 +61,61 @@
                     </div>
                 </div>
 
-
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>熱銷商品</label>
                         </div>
                     </div>
-                    @for($i=1; $i<=4; $i++)
-                        {!! Form::open(['id' => ('pdform'.$i), 'method' => 'PUT','action' => ['OnlineController@hotproduct', $i]]) !!}
+                    @for($i=0; $i<count($ToShowProDucts); $i++)
+                        {!! Form::open(['id' => ('pdform'.$i), 'method' => 'PUT','action' => ['OnlineController@hotproduct', $ToShowProDucts[$i]['hotpd_id'] ]]) !!}
                             <div class="col-md-3" style="text-align: center;">
                                 <div class="thumbnail">
-                                    <span>熱銷商品{{$i}}</span>
-                                    <p class="text-justify">熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章</p>
-                                    <img style="margin: 5px 0px;width: 100%;" src="http://placehold.it/1170x613">
+                                    <span>熱銷商品{{ ($i + 1) }}</span>
+                                    <p style="cursor: default;">
+                                        @if(mb_strlen($ToShowProDucts[$i]['title'],"utf-8") < 33)
+                                            {{$ToShowProDucts[$i]['title']}}
+                                        @else
+                                            {{mb_substr($ToShowProDucts[$i]['title'],0,33,"utf-8").'...'}}
+                                        @endif
+                                    </p>
+                                    <img style="margin: 5px 0px;width: 100%;" src="{{ url('images/product/',$ToShowProDucts[$i]['src']) }}">
                                     <input id="pdradioid{{$i}}" name="pdradioid" type="hidden" value="">
                                     <button onclick="productedit({{$i}})" type="button" class="btn btn-block btn-warning">修改</button>
                                 </div>
                             </div>
                         {!! Form::close() !!}
-                        <div class="modal fade" id="productmodel" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title">修改熱銷商品</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div id="productmodelH" class="row" style="height: 300px;overflow-y: scroll;">
-                                            @for($j=1; $j<=50; $j++)
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-addon">
-                                                                <input name="productradio" type="radio" value="玫瑰花{{$j}}">
-                                                            </div>
-                                                            <input value="玫瑰花{{$j}}" disabled style="text-align: center;" type="text" class="form-control">
+                    @endfor
+                    <div class="modal fade" id="productmodel" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">修改熱銷商品</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="productmodelH" class="row" style="height: 300px;overflow-y: scroll;">
+                                        @for($i=0;$i<count($ToRadioProducts);$i++)
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">
+                                                            <input name="productradio" type="radio" value="{{ $ToRadioProducts[$i]['_id'] }}">
                                                         </div>
+                                                        <textarea style="resize: none;" rows="3" cols="10" disabled type="text" class="form-control text-justify">{{$ToRadioProducts[$i]['title']}}</textarea>
                                                     </div>
                                                 </div>
-                                            @endfor
-                                        </div>
+                                            </div>
+                                        @endfor
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                        <button onclick="productmodalsave()" type="button" class="btn btn-primary">儲存</button>
-                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button onclick="productmodalsave()" type="button" class="btn btn-primary">儲存</button>
                                 </div>
                             </div>
                         </div>
-                    @endfor
+                    </div>
                 </div>
 
                 <div class="row">
@@ -119,49 +124,55 @@
                             <label>熱門文章</label>
                         </div>
                     </div>
-                    @for($i=1; $i<=4; $i++)
+                    @for($i=0; $i<count($ToShowarticles); $i++)
                         <div class="col-md-3" style="text-align: center;">
-                            {!! Form::open(['id' => ('articleform'.$i), 'method' => 'PUT','action' => ['OnlineController@hotarticle', $i]]) !!}
+                            {!! Form::open(['id' => ('articleform'.$i), 'method' => 'PUT','action' => ['OnlineController@hotarticle', $ToShowarticles[$i]['hotart_id'] ]]) !!}
                             <div class="thumbnail">
-                                <span>熱門文章{{$i}}</span>
-                                <p class="text-justify">熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章熱門文章</p>
-                                <img style="margin: 5px 0px;width: 100%;" src="http://placehold.it/1170x613" alt="#">
+                                <span>熱門文章{{ $i + 1 }}</span>
+                                <p style="cursor: default;">
+                                    @if(mb_strlen($ToShowarticles[$i]['title'],"utf-8") < 33)
+                                        {{ $ToShowarticles[$i]['title'] }}
+                                    @else
+                                        {{ mb_substr($ToShowarticles[$i]['title'],0,33,"utf-8").'...' }}
+                                    @endif
+                                </p>
+                                <img style="margin: 5px 0px;width: 100%;" src="{{ url('images/article/',$ToShowarticles[$i]['src']) }}" alt="#">
                                 <input id="articleradioid{{$i}}" name="articleradioid" type="hidden" value="">
                                 <button onclick="articleedit({{$i}})" type="button" class="btn btn-block btn-warning">修改</button>
                             </div>
                             {!! Form::close() !!}
                         </div>
-                        <div class="modal fade" id="articlemodel" tabindex="-1" role="dialog">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title">修改熱門文章</h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div id="articlemodelH" class="row" style="height: 300px;overflow-y: scroll;">
-                                            @for($j=1; $j<=50; $j++)
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <div class="input-group">
-                                                            <div class="input-group-addon">
-                                                                <input name="articleradio" type="radio" value="鳳梨{{$j}}">
-                                                            </div>
-                                                            <input value="鳳梨{{$j}}" disabled style="text-align: center;" type="text" class="form-control">
+                    @endfor
+                    <div class="modal fade" id="articlemodel" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">修改熱門文章</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="articlemodelH" class="row" style="height: 300px;overflow-y: scroll;">
+                                        @for($j=0;$j<count($ToRadioArticles);$j++)
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">
+                                                            <input name="articleradio" type="radio" value="{{ $ToRadioArticles[$j]['_id'] }}">
                                                         </div>
+                                                        <textarea style="resize: none;" rows="3" cols="10" disabled type="text" class="form-control text-justify">{{ $ToRadioArticles[$j]['title'] }}</textarea>
                                                     </div>
                                                 </div>
-                                            @endfor
-                                        </div>
+                                            </div>
+                                        @endfor
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                        <button onclick="articlemodalsave()" type="button" class="btn btn-primary">儲存</button>
-                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                    <button onclick="articlemodalsave()" type="button" class="btn btn-primary">儲存</button>
                                 </div>
                             </div>
                         </div>
-                    @endfor
+                    </div>
                 </div>
 
             </div>

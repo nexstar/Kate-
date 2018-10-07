@@ -36,22 +36,34 @@
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                @for($i=0;$i<10;$i++)
+                                @foreach($courses as $courses)
                                     <tr style="cursor: default;">
                                         <td style="width:20%;">
-                                            <img src="{{ url('images/course/course_1537007975_titlepage.jpg') }}" style="width:100%;">
+                                            <img src="{{ url('/images/course/'.$courses->imgjson['img']) }}" style="width:100%;">
                                         </td>
-                                        <td style="font-size: 20px;">9999</td>
-                                        <td style="font-size: 20px;">我是標題</td>
-                                        <td style="font-size: 20px;">1月13號_18:00</td>
+                                        <td style="font-size: 20px;">{{ count($courses->point) }}</td>
+                                        <td style="font-size: 20px;">{{ $courses->title }}</td>
+                                        <td style="font-size: 20px;">
+                                            @for($i=0;$i<count($courses->Timeslot);$i++)
+                                                <p style="font-size: 15px;">{{ $courses->Timeslot[$i]['year'].'年'.$courses->Timeslot[$i]['month'].'月'.$courses->Timeslot[$i]['day'].'號_'.$courses->Timeslot[$i]['hour'].'點' }}</p>
+                                            @endfor
+                                        </td>
                                         <td style="width:15%;">
-                                            <a href="#" class="btn btn-block btn-primary">上架</a>
-                                            <a href="#" class="btn btn-block btn-info">下架</a>
-                                            <a href="#" class="btn btn-block btn-danger">刪除</a>
-                                            <a href="{{ route('onlinecourse.edit', $i) }}" class="btn btn-block btn-warning">修改</a>
+                                            @if($courses->onffonline)
+                                                <a href="{{ route('course.onoff',[$courses->_id,0]) }}" class="btn btn-block btn-info">下架</a>
+                                            @else
+                                                <a href="{{ route('course.onoff',[$courses->_id,1]) }}" class="btn btn-block btn-primary">上架</a>
+                                            @endif
+                                            {!! Form::open([
+                                                'id' => ('rmcourse'.$courses->_id), 'method' => 'DELETE',
+                                                'action' => ['OnlineCourseController@destroy',$courses->_id]])
+                                            !!}
+                                            {!! Form::close() !!}
+                                            <button onclick="btnrmcourse('{{$courses->_id}}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
+                                            <a href="{{ route('onlinecourse.edit', $courses->_id) }}" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
-                                @endfor
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -69,6 +81,11 @@
     <script type="text/javascript">
         var _main_table = $( window ).height() - 200;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
+        function btnrmcourse($id) {
+             if(confirm("確定刪除此課程??")){
+                 $("#rmcourse"+$id).submit();
+             };
+        };
     </script>
 
     <style type="text/css">

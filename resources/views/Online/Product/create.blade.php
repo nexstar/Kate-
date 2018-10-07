@@ -24,7 +24,7 @@
                         </div>
                         <div class="form-group">
                             <label for="name">商品價位</label>
-                            <input id="money" name="money" max="9999" min="1" type="number" class="form-control">
+                            <input id="money" name="money" max="9999999" min="1" type="number" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="name">照片</label>
@@ -46,8 +46,7 @@
 
                     <div class="col-md-6" style="text-align: right;margin-bottom: 10px;">
                         <button onclick="btnadddivsix()" type="button" class="btn btn-info">＋
-                            <span id="adddivsixspan">
-                            </span>
+                            <span id="adddivsixspan"></span>
                         </button>
                     </div>
 
@@ -189,6 +188,11 @@
                                 <select id="modelsmallitem" class="form-control"></select>
                             </div>
                             <div class="form-group">
+                                <label>商品名稱</label>
+                                <select id="modelproduct" class="form-control"></select>
+                                <input  id="modelproductiput" type="hidden" value="">
+                            </div>
+                            <div class="form-group">
                                 <label>商品加購金</label>
                                 <input id="modeladdmoney" max="9999" min="1" type="text" class="form-control">
                             </div>
@@ -234,60 +238,84 @@
 
         $("#pdbigitem").change(function () {
             let _pdbigitemid = $(this).val();
-            let _ajaxsuccessdata;
             if( _pdbigitemid != ""){
                 $.ajax({
-                    type:'GET',
-                    url: "{{ url('OnlineProductController/small') }}"+'/'+_pdbigitemid,
-                    data: {},
-                    async: false,
+                    type:"GET",
+                    url: "{{ url('/OnlineProductItemsController/small') }}"+'/'+_pdbigitemid,
+                    data:'_token = <?php echo csrf_token() ?>',
+                    async: true,
                     success:function(data){
-                        _ajaxsuccessdata = JSON.parse(data);
+                        let _ajaxsuccessdata = JSON.parse(data);
+                        $("#pdsmallitem").empty();
+
+                        let $tmpsmallmodel = "";
+                        $.each(_ajaxsuccessdata, function (key,val) {
+                            $tmpsmallmodel += '<option value="'+val['_id']+'_'+val['name']+'" selected>'+val['name']+'</option>';
+                        });
+                        $("#pdsmallitem").append($tmpsmallmodel);
                     }
                 });
-                $("#pdsmallitem").empty();
-                let $tmpsmallmodel = "";
-                $.each(_ajaxsuccessdata, function (key,val) {
-                    $tmpsmallmodel += '<option value="'+val+'" selected>'+val+'</option>';
-                });
-                $("#pdsmallitem").append($tmpsmallmodel);
             };
         });
 
         {{-- 加購模組 --}}
         $("#modelbigitem").change(function () {
             let _bigitemid = $(this).val();
-            let _ajaxsuccessdata;
+            $("#modelproduct").empty();
+            $("#modelsmallitem").empty();
             if( _bigitemid != ""){
                 $.ajax({
-                    type:'GET',
-                    url: "{{ url('OnlineProductController/small') }}"+'/'+_bigitemid,
-                    data: {},
-                    async: false,
+                    type:"GET",
+                    url: "{{ url('/OnlineProductItemsController/small') }}"+'/'+_bigitemid,
+                    data:'_token = <?php echo csrf_token() ?>',
+                    async: true,
                     success:function(data){
-                        _ajaxsuccessdata = JSON.parse(data);
+                        let _ajaxsuccessdata = JSON.parse(data);
+                        let $tmpsmallmodel = "";
+                        $.each(_ajaxsuccessdata, function (key,val) {
+                            $tmpsmallmodel += '<option value="'+val['name']+'" selected>'+val['name']+'</option>';
+                        });
+
+                        $("#modelsmallitem").append($tmpsmallmodel);
                     }
                 });
-                $("#modelsmallitem").empty();
-                let $tmpsmallmodel = "";
-                $.each(_ajaxsuccessdata, function (key,val) {
-                    $tmpsmallmodel += '<option value="'+val+'" selected>'+val+'</option>';
+            };
+        });
+
+        $("#modelsmallitem").change(function () {
+            let _smallitemid = $(this).val();
+            $("#modelproduct").empty();
+            if( _smallitemid != ""){
+                $.ajax({
+                    type:"GET",
+                    url: "{{ url('/OnlineProductItemsController/pdname') }}"+'/'+_smallitemid,
+                    data:'_token = <?php echo csrf_token() ?>',
+                    async: true,
+                    success:function(data){
+                        let _ajaxsuccessdata = JSON.parse(data);
+                        let $tmppdnamemodel = "";
+                        $.each(_ajaxsuccessdata, function (key,val) {
+                            $tmppdnamemodel += '<option value="'+val['title']+'" selected>'+val['title']+'</option>';
+                        });
+
+                        $("#modelproduct").append($tmppdnamemodel);
+                    }
                 });
-                $("#modelsmallitem").append($tmpsmallmodel);
             };
         });
 
         $("#modeladdmoney").change(function () {
-            if($(this).val() >= 9999){
-                alert("價格超過9999");
+            if($(this).val() >= 9999999){
+                alert("價格超過9999999");
                 $(this).val('');
             };
         });
 
         function modeladdpdsave(){
-            let _modelbigitem  = $("#modelbigitem").val();
-            let _modelsmallitem  = $("#modelsmallitem").val();
-            let _modeladdmoney = $("#modeladdmoney").val();
+            let _modelbigitem   = $("#modelbigitem").val();
+            let _modelsmallitem = $("#modelsmallitem").val();
+            let _modelproduct   = $("#modelproduct").val();
+            let _modeladdmoney  = $("#modeladdmoney").val();
 
             if( (_modelbigitem == "請選擇大項") || (String(_modelbigitem) == "undefined") ){
                 alert("加購大項未選");
@@ -295,29 +323,35 @@
                 if( (_modelsmallitem  == "請選擇小項") || (String(_modelsmallitem) == "null") ){
                     alert("加購小項未選");
                 }else{
-                    if(_modeladdmoney <= 0){
-                        alert("加購金不能底於零");
+                    if( (String(_modelproduct) == "null") ){
+                        alert("加購商品，未選擇");
                     }else{
-                        if(confirm("確定新增加購模組")){
-                            maxaddpdspan--;
-                            divaddpttitle.push(_modelsmallitem);
-                            divaddpmoney.push(_modeladdmoney);
-                            update_addpdmodel();
-                            $("#addpdmodel").modal('hide');
+                        if(_modeladdmoney <= 0){
+                            alert("加購金不能底於零");
+                        }else{
+                            if(confirm("確定新增加購模組")){
+                                maxaddpdspan--;
+                                divaddptid.push(Date.now()+1);
+                                divaddsmallpdid.push(_modelproduct[0]);
+                                divaddpttitle.push(_modelproduct[1]);
+                                divaddpmoney.push(_modeladdmoney);
+                                update_addpdmodel();
+                                $("#addpdmodel").modal('hide');
+                            };
                         };
                     };
                 };
             };
-
         };
 
         {{-- 加購商品 --}}
         var maxaddpdspan = 3;
         $("#addproductspan").html(maxaddpdspan);
 
-        var divaddptid = [];
+        var divaddptid    = [];
+        var divaddsmallpdid = [];
         var divaddpttitle = [];
-        var divaddpmoney = [];
+        var divaddpmoney  = [];
 
         function btnaddproduct() {
             if(maxaddpdspan <= 0) return;
@@ -327,7 +361,6 @@
             $("#modelbigitem").val('請選擇大項');
             $("#modelsmallitem").empty();
             $("#addpdmodel").modal();
-            divaddptid.push(Date.now()+1);
         };
 
         function update_addpdmodel() {
@@ -338,17 +371,18 @@
             };
 
             for ($i=0; $i<divaddptid.length;$i++){
-                pdmodel(divaddptid[$i],divaddpttitle[$i],divaddpmoney[$i]);
+                pdmodel(divaddptid[$i],divaddsmallpdid[$i],divaddpttitle[$i],divaddpmoney[$i]);
             };
             $("#addproductspan").html(maxaddpdspan);
         }
 
-        function pdmodel($date,$title,$money) {
+        function pdmodel($date,$pdid,$title,$money) {
             $tmp = "";
             $tmp += '<div class="col-md-4">';
                 $tmp += '<div class="form-group">';
                     $tmp += '<i onclick="btnrmaddpdmodel('+$date+')" style="cursor: pointer;float: right;" class="fas fa-trash-alt"></i>';
                     $tmp += '<div style="clear: both;"></div>';
+                    $tmp += '<input name="pdmodelpdid[]" type="text" value="'+$pdid+'" style="background-color: #dddddd" class="form-control">';
                     $tmp += '<input name="pdmodeltitle[]" type="text" value="'+$title+'" style="background-color: #dddddd" class="form-control">';
                     $tmp += '<input name="pdmodelmoney[]" type="text" value="'+$money+'" style="background-color: #dddddd" class="form-control">';
                 $tmp += '</div>';
@@ -391,15 +425,16 @@
                     window.location.href = "create";
                 };
                 $("#addsixspangc").modal();
-                divsixmodelid.push(Date.now());
             };
 
             function modelsixspansave(){
                 let _modaltitle = $("#modaldivsixtitle").val();
+                console.log(_modaltitle);
                 if(_modaltitle == ""){
                     alert("小標題不能為空");
                 }else{
                     maxspan--;
+                    divsixmodelid.push(Date.now());
                     divsixmodeltitle.push(_modaltitle);
                     $("#addsixspangc").modal('hide');
                     update_divappend();
@@ -449,8 +484,8 @@
             };
 
             $("#money").change(function () {
-                if($(this).val() >= 9999){
-                  alert("金額超過9999");
+                if($(this).val() >= 9999999){
+                  alert("金額超過9999999");
                   $(this).val('').focus();
                 };
             });
@@ -620,13 +655,13 @@
                                                 if( (divsixmodelid.length <= 0) ){
                                                     alert("小提示未上傳");
                                                 }else{
-                                                    if( (divaddptid.length <= 0) ){
-                                                        alert("加購商品未上傳");
-                                                    }else{
-                                                        if(confirm("確定新增商品??")){
-                                                            $("#createproductfrom").submit();
-                                                        };
+                                                    // if( (divaddptid.length <= 0) ){
+                                                    //     alert("加購商品未上傳");
+                                                    // }else{
+                                                    if(confirm("確定新增商品??")){
+                                                        $("#createproductfrom").submit();
                                                     };
+                                                    // };
                                                 };
                                             };
                                         };

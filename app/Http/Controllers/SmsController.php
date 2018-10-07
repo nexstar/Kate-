@@ -15,7 +15,7 @@ class SmsController extends Controller
 	protected $users = '';
 
 	public function __construct(){
-		$this->users = User::findOrFail("5b7153ec7c82e85d1036e8a1");
+		$this->users = User::findOrFail(env('MONGO_DB_ROOT'));
 		$url = "https://oms.every8d.com/API21/HTTP/getCredit.ashx?UID=".$this->users->smsname."&PWD=".$this->users->smspwd;
 		$this->SmsCount = file_get_contents($url);
 	}

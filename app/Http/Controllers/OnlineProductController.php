@@ -4,31 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\imageload;
+use App\pdbigitem;
+use App\Product;
+use App\Classify;
 
 class OnlineProductController extends Controller
 {
-    public function offline($id){
-        dd($id);
-    }
 
-    public function online($id){
-        dd($id);
+    public function onoffline($id,$uplow){
+        $products = Product::findOrFail($id);
+        $products->onoff = ((int) $uplow);
+        $products->update();
+        return redirect()->back();
     }
 
     public function index()
     {
-        $TmpDB = [
-            0 => [
-                "id" => "我是_id",
-                "title" => "商品AAA",
-                "pdbigitem" => "1",
-                "pdsmallitem" => "10",
-                "src" => "product_1537192232_titlepage.jpg",
-                "fe" => "jpg",
-                "inventory" => "1000",
-                "onoff" => "0"
-            ]
-        ];
+        $products = Product::orderBy('created_at','desc')->get();
+
+        $TmpDB = [];
+
+        foreach ($products as $productslist){
+            array_push($TmpDB,
+                array(
+                    "id" => $productslist->_id,
+                    "title" => $productslist->title,
+                    "pdbigitem" => $productslist->pdbigitem,
+                    "pdsmallitem" => $productslist->pdsmallitem,
+                    "src" => $productslist->src,
+                    "fe" => $productslist->fe,
+                    "inventory" => ((int) $productslist->inventory),
+                    "onoff" => $productslist->onoff,
+                )
+            );
+        };
 
         for($i=0;$i<count($TmpDB);$i++){
             //封面
@@ -39,71 +48,50 @@ class OnlineProductController extends Controller
         return view('Online.Product.index',compact('TmpDB'));
     }
 
-    public function smallitem($id){
-
-        $tmpsmallitem = [
-            '請選擇小項' => '請選擇小項'
-        ];
-
-        for ($i=1; $i<10; $i++){
-            $tmpsmallitem[$i] = $i*10;
-        };
-
-        return json_encode($tmpsmallitem);
-    }
-
     public function info($info){
 
+        $products = Product::findOrFail($info);
+
         $TmpDB = [
-            "money" => "990",
-            "bouns" => "100",
-            "inventory" => "1000",
-            "buycount" => 999,
-            "seecount" => 999,
-            "date" => "2018/9/17, 12:00:00 AM",
-            "addpd" => [
-                0 => [
-                    "smallid" => "20",
-                    "money" => "200",
-                    "name" => "ABC",
-                    "src" => "product_1537205130_edit_titlepage.jpg",
-                    "fe" => ""
-                ],
-                1 => [
-                    "smallid" => "30",
-                    "money" => "300",
-                    "name" => "ABC123",
-                    "src" => "product_1537192232_titlepage.jpg",
-                    "fe" => ""
-                ],
-            ]
+            "title" => $products->title,
+            "money" => $products->money,
+            "bouns" => $products->bouns,
+            "inventory" => $products->inventory,
+            "buycount" => count($products->buycount),
+            "point" => count($products->point),
+            "date" => $products->date,
+            "addpd" => []
         ];
+
+        for ($i=0;$i<count($products->addpd);$i++){
+            $getpdsrc = Product::findOrFail($products->addpd[$i]['pdid']);
+
+            array_push($TmpDB['addpd'],
+                array(
+                    'pdid' => $products->addpd[$i]['pdid'],
+                    'pdname' => $products->addpd[$i]['pdname'],
+                    'money' => $products->addpd[$i]['money'],
+                    "src" => $getpdsrc->src
+                )
+            );
+        };
 
         for($i=0;$i < count($TmpDB['addpd']); $i++){
             $getmodelbase64  = imageload::upimgpath( ('images/product/'.$TmpDB['addpd'][$i]['src']) );
             $TmpDB['addpd'][$i]['src'] = $getmodelbase64;
         };
 
-        $TmpType = [
-            0 => [
-                "name" => "1111111",
-                "addcheckboxgroup" => [
-                    0 => "1",
-                    1 => "5",
-                    2 => "9",
-                    3 => "13",
-                ]
-            ],
-            1 => [
-                "name" => "222222",
-                "addcheckboxgroup" => [
-                    0 => "1",
-                    1 => "5",
-                    2 => "9",
-                    3 => "13",
-                ]
-            ]
-        ];
+        $classifys = Classify::where('addcheckboxgroup','elemMatch',[ 'name' => ['$eq' => $products->title] ])->get();
+
+        $TmpType = [];
+
+        foreach ($classifys as $classifyslist){
+            array_push($TmpType,
+                array(
+                    "name" => $classifyslist->name
+                )
+            );
+        };
 
         return view('Online.Product.indexinfo',compact('TmpDB','TmpType'));
     }
@@ -113,9 +101,9 @@ class OnlineProductController extends Controller
         $tmpbigitem = [
             '請選擇大項' => '請選擇大項'
         ];
-
-        for ($i=1; $i<10; $i++){
-            $tmpbigitem[$i] = $i;
+        $pdbigitem = pdbigitem::orderBy('created_at','desc')->get();
+        foreach ($pdbigitem as $pdbigitemlist){
+            $tmpbigitem[$pdbigitemlist->name] = $pdbigitemlist->name;
         };
 
         return view('Online.Product.create', compact('tmpbigitem'));
@@ -123,8 +111,8 @@ class OnlineProductController extends Controller
 
     public function store(Request $request)
     {
-        $this->create_update($request, "");
-
+        $this->create_update($request, "","");
+        return redirect('onlineproduct');
     }
 
     public function show($id)
@@ -134,60 +122,62 @@ class OnlineProductController extends Controller
 
     public function edit($id)
     {
+        $pdbigitem = pdbigitem::all();
         $tmpbigitem = [
             '請選擇大項' => '請選擇大項'
         ];
 
-        for ($i=1; $i<10; $i++){
-            $tmpbigitem[$i] = $i;
+        foreach ($pdbigitem as $pdbigitemlist){
+            $tmpbigitem[$pdbigitemlist->name] = $pdbigitemlist->name;
         };
 
+        $product = Product::findOrFail($id);
+
         $TmpDB = [
-            "id" => "我是_id",
-            "title" => "商品AAA",
-            "money" => "990",
-            "pdbigitem" => "1",
-            "pdsmallitem" => "10",
-            "bouns" => "100",
-            "inventory" => "1000",
-            "date" => "2018/9/17, 12:00:00 AM",
-            "contents" => "商品內容",
-            "src" => "product_1537192232_titlepage.jpg",
-            "fe" => "jpg",
-            "onoff" => 0,
-            "discount" => 0,
-            "buycount" => 999,
-            "seecount" => 999,
-            "prompt" => [
-                0 => "A001",
-                1 => "A002",
-                2 => "A003",
-            ],
-            "addpd" => [
-                0 => [
-                    "smallid" => "20",
-                    "money" => "200",
-                ],
-                1 => [
-                    "smallid" => "30",
-                    "money" => "300",
-                ],
-            ],
-            "modelgc" => [
-                0 => [
-                    "title" => "模組標題A",
-                    "src" => "product_1537192232_0.jpg",
-                    "fe" => "jpg",
-                    "contents" => "模組內容A",
-                ],
-                1 => [
-                    "title" => "模組標題B",
-                    "src" => "product_1537192232_1.jpg",
-                    "fe" => "jpg",
-                    "contents" => "模組內容B",
-                ],
-            ],
+            "id" => $product->_id,
+            "title" => $product->title,
+            "money" => ((int) $product->money),
+            "pdbigitem" => $product->pdbigitem,
+            "pdsmallitem" => $product->pdsmallitem,
+            "bouns" => $product->bouns,
+            "inventory" => $product->inventory,
+            "date" => $product->date,
+            "contents" => $product->contents,
+            "src" => $product->src,
+            "fe" => $product->fe,
+            "prompt" => [],
+            "addpd" => [],
+            "modelgc" => []
         ];
+
+        session(['rmimg' => $product->src ]);
+
+        for ($i=0;$i<count($product->prompt);$i++){
+            $TmpDB['prompt'][$i] = $product->prompt[$i];
+        };
+
+        for ($i=0;$i<count($product->addpd);$i++){
+            array_push($TmpDB['addpd'],
+                array(
+                    "pdid" => $product->addpd[$i]['pdid'],
+                    "pdname" => $product->addpd[$i]['pdname'],
+                    "money" => $product->addpd[$i]['money'],
+                )
+            );
+        };
+
+        for ($i=0;$i<count($product->modelgc);$i++){
+            array_push($TmpDB['modelgc'],
+                array(
+                    "title" => $product->modelgc[$i]['title'],
+                    "src" => $product->modelgc[$i]['src'],
+                    "fe" => $product->modelgc[$i]['fe'],
+                    "contents" => $product->modelgc[$i]['contents'],
+                )
+            );
+        };
+
+        session(['rmmodelimg' => $product->modelgc ]);
 
         //封面
         $getbase64  = imageload::upimgpath( ('images/product/'.$TmpDB['src']) );
@@ -198,21 +188,37 @@ class OnlineProductController extends Controller
             $getmodelbase64  = imageload::upimgpath( ('images/product/'.$TmpDB['modelgc'][$i]['src']) );
             $TmpDB['modelgc'][$i]['src'] = $getmodelbase64;
         };
-
         return view('Online.Product.edit', compact('TmpDB','tmpbigitem'));
+    }
+
+    public function pdname($name){
+        $products = Product::where('pdsmallitem',$name)->get();
+        return json_encode($products);
     }
 
     public function update(Request $request, $id)
     {
-        $this->create_update($request, "edit_");
+        imageload::rmpic('product', session('rmimg'));
+        imageload::modelrmpic('product', session('rmmodelimg'),'src');
+        $this->create_update($request, "edit_",$id);
+        return redirect('onlineproduct');
     }
 
     public function destroy($id)
     {
-        dd($id);
+        $product = Product::findOrFail($id);
+
+        $_rmimg = $product->src;
+        $_rmmodelimg = $product->modelgc;
+
+        imageload::rmpic('product', $_rmimg);
+        imageload::modelrmpic('product', $_rmmodelimg,'src');
+
+        $product->delete();
+        return redirect()->back();
     }
 
-    public function create_update(Request $request, $type){
+    public function create_update(Request $request, $type,$id){
         $_title       = $request->title;
         $_money       = $request->money;
         $_pdbigitem   = $request->pdbigitem;
@@ -228,17 +234,18 @@ class OnlineProductController extends Controller
         $imageload = new imageload($_imagesrcupload,$_imagesrcuploadFe,'product',($type.'titlepage'));
         $imageload->webimg();
 
-
         //商品小提示
         $_prompt = $request->prompt;
 
         //商品加購
         $Tmpaddpd = [];
+        $_pdmodelpdid  = $request->pdmodelpdid;
         $_pdmodeltitle = $request->pdmodeltitle;
         $_pdmodelmoney = $request->pdmodelmoney;
         for($i=0;$i<count($_pdmodeltitle);$i++){
             array_push($Tmpaddpd, array(
-                'smallid' => $_pdmodeltitle[$i],
+                'pdid' => $_pdmodelpdid[$i],
+                'pdname' => $_pdmodeltitle[$i],
                 'money' => $_pdmodelmoney[$i]
             ));
         };
@@ -261,33 +268,43 @@ class OnlineProductController extends Controller
             ));
         };
 
-        $TmpSaveToDB = [
-            "id" => "我是_id",
-            'title' => $_title,
-            'money' => $_money,
-            'pdbigitem' => $_pdbigitem,
-            'pdsmallitem' => $_pdsmallitem,
-            'bouns' => $_bouns,
-            'inventory' => $_inventory,
-            'date' => $_date,
-            'contents' => $_contents,
-            'src' => $imageload->geturl(),
-            'fe' => $_imagesrcuploadFe,
-            "onoff" => 0,
-            "discount" => 0,
-            "buycount" => 999,
-            "seecount" => 999,
-            'prompt' => $_prompt,
-            'addpd' => $Tmpaddpd,
-            'modelgc' => $Tmpmodelgc
-        ];
-
-        dd($TmpSaveToDB);
-
         if($type == ""){
-
+            $product = new Product;
+            $product->title = $_title;
+            $product->money = $_money;
+            $product->pdbigitem = $_pdbigitem;
+            $product->pdsmallitem = explode('_', $_pdsmallitem)[1];
+            $product->bouns = $_bouns;
+            $product->inventory = $_inventory;
+            $product->date = $_date;
+            $product->contents = $_contents;
+            $product->src = $imageload->geturl();
+            $product->fe = $_imagesrcuploadFe;
+            $product->discountstatus = 0;
+            $product->onoff = 0;
+            $product->buycount = [];
+            $product->point = [];
+            $product->prompt = $_prompt;
+            $product->addpd = $Tmpaddpd;
+            $product->modelgc = $Tmpmodelgc;
+            $product->save();
         }else{
-
+            $product = Product::findOrFail($id);
+            $product->title = $_title;
+            $product->money = $_money;
+            $product->pdbigitem = $_pdbigitem;
+            $product->pdsmallitem = $_pdsmallitem;
+            $product->bouns = $_bouns;
+            $product->inventory = $_inventory;
+            $product->date = $_date;
+            $product->contents = $_contents;
+            $product->src = $imageload->geturl();
+            $product->fe = $_imagesrcuploadFe;
+            $product->onoff = 0;
+            $product->prompt = $_prompt;
+            $product->addpd = $Tmpaddpd;
+            $product->modelgc = $Tmpmodelgc;
+            $product->update();
         };
 
     }

@@ -65,36 +65,7 @@
 
                 <div class="col-md-6" style="text-align: right;margin-bottom: 10px;">
                     {{--<button id="addgc" class="btn btn-info">＋</button>--}}
-                    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#addgc">+</button>
-                </div>
-
-                <div class="modal fade" id="addgc" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">增加介紹</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row" style="margin-bottom: 2px;">
-                                    <div class="col-md-6">
-                                        <input id="modaltitle" type="text" class="form-control" placeholder="標題">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input id="modalpicload" type="file" accept="image/*" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <img id="modalimg" src="http://placehold.it/1170x613" style="width: 100%;height: 210px;margin-bottom: 1px;">
-                                    <textarea style="resize: none;" id="modalcontents" rows="5" placeholder="內容" class="form-control"></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button onclick="modelsave()" type="button" class="btn btn-primary">儲存</button>
-                            </div>
-                        </div>
-                    </div>
+                    <button onclick="btnaddgc()" type="button" class="btn btn-info btn-lg">+</button>
                 </div>
 
                 <div id="groupcontents">
@@ -128,7 +99,34 @@
                 </div>
             </div>
             {!! Form::close() !!}
-
+            <div class="modal fade" id="addgc" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title">增加介紹</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" style="margin-bottom: 2px;">
+                                <div class="col-md-6">
+                                    <input id="modaltitle" type="text" class="form-control" placeholder="標題">
+                                </div>
+                                <div class="col-md-6">
+                                    <input id="modalpicload" type="file" accept="image/*" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <img id="modalimg" src="http://placehold.it/1170x613" style="width: 100%;height: 210px;margin-bottom: 1px;">
+                                <textarea style="resize: none;" id="modalcontents" rows="5" placeholder="內容" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button onclick="modelsave()" type="button" class="btn btn-primary">儲存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -137,6 +135,10 @@
 
 @section('scripts')
     <script type="text/javascript">
+
+        function btnaddgc() {
+            $("#addgc").modal();
+        }
 
         function readURL(input, type){
             if(input.files && input.files[0]){

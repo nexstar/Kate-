@@ -3,18 +3,19 @@
 
     @include('Repeat.header')
 
-    <div class="container-fluid" style="margin-top: 40px;">
+    <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
-            @include('Repeat.leftmenu')
-
-            <div id="main_right" class="col-md-10" style="overflow-y: scroll;width:88.33333333%;">
+            <div id="main_right" class="col-md-12">
 
                 <div class="col-md-12">
 
-                    <div class="row">
-                        <div class="col-md-4 col-md-offset-4" style="text-align: center;">
-                            <h2>新增客戶資料</h2>
+                    <div class="row" style="padding-top: 20px;">
+                        <div class="col-md-4">
+                            <a href="{{ url('customerinfo') }}" class="btn btn-warning">返回</a>
+                        </div>
+                        <div class="col-md-4" style="text-align: center;">
+                            <p style="font-size: 30px;">新增客戶資料</p>
                         </div>
                     </div>
 
@@ -227,7 +228,8 @@
 @section('scripts')
 
     <script type="text/javascript">
-        $("#main_right").css({ "max-height" : ($( window ).height() - 50) });
+        $("#main_left").css({ "height" : ($( document ).height()) });
+
     </script>
 
 @endsection

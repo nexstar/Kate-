@@ -1,103 +1,228 @@
 <?php
 
-//-- 20180918
-Route::get('OnlineDataCenterPage','OnlineDataCenterController@index')->name('Online.DataCenter.index');
-Route::get('OnlineDataCenterPage/clientinfosheet/{id}','OnlineDataCenterController@clientinfosheet')->name('Online.DataCenter.clientinfosheet');
-Route::get('OnlineDataCenterPage/clientinfobought/{id}','OnlineDataCenterController@clientinfobought')->name('Online.DataCenter.clientinfobought');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-//-- end of 20180918
+Route::group([ 'middleware' => ['logonauth'] ], function(){
+//GreenPet
+    //部落格
+    Route::resource('/greenpetblog','GreenPetBlogController');
 
-//-- 20180917
-Route::get('/OnlineProductController/offline/{id}','OnlineProductController@offline')->name('Online.Product.offline');
-Route::get('/OnlineProductController/online/{id}','OnlineProductController@online')->name('Online.Product.online');
-Route::get('/OnlineProductController/small/{id}','OnlineProductController@smallitem')->name('Online.Product.ajaxsmall');
-//-- end of 20180917
+    Route::get('/greenpetblogsendnotifi/{id}',[
+        'as' => 'greenpetblog.sendNotifi',
+        'uses' => 'GreenPetBlogController@sendNotifi'
+    ]);
 
-//-- 20180916
-Route::put('/OnlineProductDiscountController/allweb/{id}','OnlineProductDiscountController@allwebupdate')->name('Online.Product.Discount.allweb');
-Route::put('/OnlineProductDiscountController/fullamount/{id}','OnlineProductDiscountController@fullamountupdate')->name('Online.Product.Discount.fullamount');
-Route::put('/OnlineProductDiscountController/bonus/{id}','OnlineProductDiscountController@bonusupdate')->name('Online.Product.Discount.bonus');
-//-- end of 20180916
+    //訊息通知(單)
+    Route::resource('/greenpetnotifisingle','GreenPetNotifiSingleController');
 
-//-- 20180915
-Route::get('/OnlineProductItemsController/small/{id}','OnlineProductItemsController@smallshow')->name('Online.Product.small.Items.show');
-Route::post('/OnlineProductItemsController/small','OnlineProductItemsController@smallitemstore')->name('Online.Product.small.Items.store');
-Route::put('/OnlineProductItemsController/small/{id}','OnlineProductItemsController@smallitemupdate')->name('Online.Product.small.Items.update');
-Route::delete('/OnlineProductItemsController/small/{id}','OnlineProductItemsController@smallitemdestroy')->name('Online.Product.small.Items.destroy');
+    Route::get('/greenpetnotifisingle/info/{id}',[
+        'as' => 'greenpetnotifisingle.info',
+        'uses' => 'GreenPetNotifiSingleController@info'
+    ]);
 
-Route::post('/OnlineProductItemsController/big','OnlineProductItemsController@bigitemstore')->name('Online.Product.big.Items.store');
-Route::put('/OnlineProductItemsController/big/{id}','OnlineProductItemsController@bigitemupdate')->name('Online.Product.bigItems.update');
-Route::delete('/OnlineProductItemsController/big/{id}','OnlineProductItemsController@bigitemdestroy')->name('Online.Product.bigItems.destroy');
-//-- end of 20180915
+    Route::get('/greenpetnotifisingle/notifi/{id}',[
+        'as' => 'greenpetnotifisingle.notifi',
+        'uses' => 'GreenPetNotifiSingleController@notifi'
+    ]);
 
-//-- 20180914
-Route::get('/Online', 'OnlineController@index')->name('Online.index');
-Route::put('/Online/slide/{id}', 'OnlineController@slide')->name('Online.slide');
-Route::put('/Online/hotproduct/{id}', 'OnlineController@hotproduct')->name('Online.hotproduct');
-Route::put('/Online/hotarticle/{id}', 'OnlineController@hotarticle')->name('Online.hotarticle');
-Route::put('/friend/{id}', 'OnlineFriendController@update')->name('Online.Friend.update');
-// end of 20180914
+    //訊息通知(單-預約)
+    Route::resource('/greenpetnotifireservesingle','GreenPetNotifiReserveSingleController');
 
-//-- 20180911
-Route::post('/jnadbase64upload',[
-    'as' => 'jnadtoken',
-    'uses' => 'jnadtokenController@upload',
-]);
-//-- end of 20180911
+    Route::get('/greenpetnotifireservesingle/info/{id}',[
+        'as' => 'greenpetnotifireservesingle.info',
+        'uses' => 'GreenPetNotifiReserveSingleController@info'
+    ]);
 
-//-- 20180910
-Route::get('/OnlineTransactionRecordController', [
-   'as' => 'onlinetransactionrecordcontroller',
-   'uses'=>'OnlineTransactionRecordController@index'
-]);
+    //訊息通知(群)
+    Route::resource('/greenpetnotifigroup','GreenPetNotifiGroupController');
 
-Route::resource('/onlineproduct', 'OnlineProductController');
+    Route::get('/greenpetnotifigroup/info/{id}',[
+        'as' => 'greenpetnotifigroup.info',
+        'uses' => 'GreenPetNotifiGroupController@info'
+    ]);
 
-Route::get('/OnlineTransactionRecordController/info/{info}', [
-    'as' => 'onlinetransactionrecordcontroller.info',
-    'uses'=>'OnlineProductController@info'
-]);
+    Route::get('/greenpetnotifigroup/notifi/{id}',[
+        'as' => 'greenpetnotifigroup.notifi',
+        'uses' => 'GreenPetNotifiGroupController@notifi'
+    ]);
 
-Route::resource('/onlineproductdiscount', 'OnlineProductDiscountController');
-Route::resource('/onlineproducttpye', 'OnlineProductTpyeController');
+    //訊息通知(群-預約)
+    Route::resource('/greenpetnotifireservegroup','GreenPetNotifiReserveGroupController');
 
-Route::get('/OnlineProductItemsController', [
-    'as' => 'onlineproductitemscontroller.index',
-    'uses'=>'OnlineProductItemsController@index'
-]);
+    Route::get('/greenpetnotifireservegroup/info/{id}',[
+        'as' => 'greenpetnotifireservegroup.info',
+        'uses' => 'GreenPetNotifiReserveGroupController@info'
+    ]);
 
-Route::resource('/onlinecourse', 'OnlineCourseController');
+    Route::get('/greenpetnotifireservegroup/notifi/{id}',[
+        'as' => 'greenpetnotifireservegroup.notifi',
+        'uses' => 'GreenPetNotifiReserveGroupController@notifi'
+    ]);
 
-Route::get('/onlinedatacenternetworktraffic/y', [
-    'as' => 'onlinedatacenternetworktrafficY',
-    'uses' => 'OnlineDataCenterNetworkTrafficController@y'
-]);
+    //幻燈片
+    Route::group(['prefix' => 'greenpetslide'],function () {
+        Route::get('/', [
+            'as' => 'greenpetslide.index',
+            'uses' => 'GreenPetSlideController@index',
+        ]);
 
-Route::get('/onlinedatacenternetworktraffic/m/{m}/y/{y}', [
-    'as' => 'onlinedatacenternetworktrafficM',
-    'uses' => 'OnlineDataCenterNetworkTrafficController@m'
-]);
-
-Route::get('/onlinedatacenternetworktraffic/d/{d}/m/{m}/y/{y}', [
-    'as' => 'onlinedatacenternetworktrafficD',
-    'uses' => 'OnlineDataCenterNetworkTrafficController@d'
-]);
-
-//-- end fo 20180910
-
-//-- 20180907
-Route::get('/friend', 'OnlineFriendController@index')->name('Online.Friend.index');
-
-Route::resource('/onlinearticle', 'OnlineArticleController');
-
-Route::resource('/onlinenew', 'OnlineNewController');
-
-Route::resource('/customertimersms', 'CustomerTimerSmsController');
-//--- end of 20180907
-
-    Route::get('/', function () {
-        return view('welcome');
+        Route::put('/{id}', [
+            'as' => 'greenpetslide.store',
+            'uses' => 'GreenPetSlideController@store',
+        ]);
     });
+
+//GreenPet picload
+    Route::post('/jnadbase64upload',[
+        'as' => 'jnadtoken.upload',
+        'uses' => 'jnadtokenController@upload',
+    ]);
+
+    Route::get('/rmpic/{id}',[
+        'as' => 'jnadtoken.rmpic',
+        'uses' => 'jnadtokenController@rmpic',
+    ]);
+
+//數據中心
+    Route::get('OnlineDataCenterPage',
+        'OnlineDataCenterController@index'
+    )->name('Online.DataCenter.index');
+
+    Route::get('OnlineDataCenterPage/clientinfosheet/{id}',
+        'OnlineDataCenterController@clientinfosheet'
+    )->name('Online.DataCenter.clientinfosheet');
+
+    Route::get('OnlineDataCenterPage/clientinfobought/{id}',
+        'OnlineDataCenterController@clientinfobought'
+    )->name('Online.DataCenter.clientinfobought');
+
+//商品設定
+    Route::get('/OnlineProductController/onoffline/{id}/{uplow}',
+        'OnlineProductController@onoffline'
+    )->name('Online.Product.onoffline');
+
+    Route::get('/OnlineProductItemsController/pdname/{id}',
+        'OnlineProductController@pdname'
+    )->name('Online.Product.pdname');
+
+    // 小項資訊由 Online.Product.small.Items.show 獲得
+
+//    Route::get('/OnlineProductController',
+//        'OnlineProductController@index'
+//    )->name('Online.Product.online');
+
+//商品折扣
+    Route::resource('/onlineproductdiscount', 'OnlineProductDiscountController');
+
+    Route::put('/OnlineProductDiscountController/allweb/{id}',
+        'OnlineProductDiscountController@allwebupdate'
+    )->name('Online.Product.Discount.allweb');
+
+    Route::put('/OnlineProductDiscountController/fullamount/{id}',
+        'OnlineProductDiscountController@fullamountupdate'
+    )->name('Online.Product.Discount.fullamount');
+
+    Route::put('/OnlineProductDiscountController/bonus/{id}',
+        'OnlineProductDiscountController@bonusupdate'
+    )->name('Online.Product.Discount.bonus');
+
+//商品大小項
+    Route::get('/OnlineProductItemsController', [
+        'as' => 'onlineproductitemscontroller.index',
+        'uses'=>'OnlineProductItemsController@index'
+    ]);
+
+    Route::get('/OnlineProductItemsController/small/{id}',
+        'OnlineProductItemsController@smallshow'
+    )->name('Online.Product.small.Items.show');
+
+    Route::post('/OnlineProductItemsController/small',
+        'OnlineProductItemsController@smallitemstore'
+    )->name('Online.Product.small.Items.store');
+
+    Route::put('/OnlineProductItemsController/small/{id}',
+        'OnlineProductItemsController@smallitemupdate'
+    )->name('Online.Product.small.Items.update');
+
+    Route::delete('/OnlineProductItemsController/small/{id}',
+        'OnlineProductItemsController@smallitemdestroy'
+    )->name('Online.Product.small.Items.destroy');
+
+    Route::post('/OnlineProductItemsController/big',
+        'OnlineProductItemsController@bigitemstore'
+    )->name('Online.Product.big.Items.store');
+
+    Route::put('/OnlineProductItemsController/big/{id}',
+        'OnlineProductItemsController@bigitemupdate'
+    )->name('Online.Product.bigItems.update');
+
+    Route::delete('/OnlineProductItemsController/big/{id}',
+        'OnlineProductItemsController@bigitemdestroy'
+    )->name('Online.Product.bigItems.destroy');
+
+//首頁
+    Route::get('/Online', 'OnlineController@index')->name('Online.index');
+    Route::put('/Online/slide/{id}', 'OnlineController@slide')->name('Online.slide');
+    Route::put('/Online/hotproduct/{id}', 'OnlineController@hotproduct')->name('Online.hotproduct');
+    Route::put('/Online/hotarticle/{id}', 'OnlineController@hotarticle')->name('Online.hotarticle');
+
+//朋友肯定
+    Route::put('/friend/{id}', 'OnlineFriendController@update')->name('Online.Friend.update');
+    Route::get('/friend', 'OnlineFriendController@index')->name('Online.Friend.index');
+
+//交易記錄
+    Route::get('/OnlineTransactionRecordController', [
+       'as' => 'onlinetransactionrecordcontroller',
+       'uses'=>'OnlineTransactionRecordController@index'
+    ]);
+
+//商品資訊
+    Route::get('/OnlineTransactionRecordController/info/{info}', [
+        'as' => 'onlinetransactionrecordcontroller.info',
+        'uses'=>'OnlineProductController@info'
+    ]);
+
+//商品首頁
+    Route::resource('/onlineproduct', 'OnlineProductController');
+
+//商品分類
+    Route::resource('/onlineproducttpye', 'OnlineProductTpyeController');
+
+//課程
+    Route::resource('/onlinecourse', 'OnlineCourseController');
+    Route::get('/onlinecourse/{id}/{uplow}',
+        'OnlineCourseController@onoff'
+    )->name('course.onoff');
+
+//文章
+    Route::resource('/onlinearticle', 'OnlineArticleController');
+    Route::get('/onlinearticle/{id}/{uplow}',
+        'OnlineArticleController@onoffonline'
+    )->name('Article.onoffonline');
+
+//新聞
+    Route::resource('/onlinenew', 'OnlineNewController');
+
+//簡訊群組-預約發送
+    Route::resource('/customertimersms', 'CustomerTimerSmsController');
+
+//網路流量
+    Route::get('/onlinedatacenternetworktraffic/y', [
+        'as' => 'onlinedatacenternetworktrafficY',
+        'uses' => 'OnlineDataCenterNetworkTrafficController@y'
+    ]);
+
+    Route::get('/onlinedatacenternetworktraffic/m/{m}/y/{y}', [
+        'as' => 'onlinedatacenternetworktrafficM',
+        'uses' => 'OnlineDataCenterNetworkTrafficController@m'
+    ]);
+
+    Route::get('/onlinedatacenternetworktraffic/d/{d}/m/{m}/y/{y}', [
+        'as' => 'onlinedatacenternetworktrafficD',
+        'uses' => 'OnlineDataCenterNetworkTrafficController@d'
+    ]);
 
 //用戶新增測試
     Route::get('/TestInsertUser', [
@@ -111,8 +236,7 @@ Route::resource('/customertimersms', 'CustomerTimerSmsController');
 		'uses' => 'UserController@login'
 	])->name('UserController.login');
 
-Route::group([ 'middleware' => ['logonauth'] ], function(){
- 
+//初始middleware.logonauth
 	Route::get('/success', [
 		'as' => 'success',
 		'uses' => 'UserController@index'

@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\imageload;
+use App\Article;
 
 class OnlineArticleController extends Controller
 {
     public function show($id){}
+
     private $articleType = [
         0 => "",
         1 => "春", 2 => "夏",
@@ -15,9 +16,18 @@ class OnlineArticleController extends Controller
         5 => "照顧小幫手"
     ];
 
+    public function onoffonline($id,$uplow){
+        $article = Article::findOrFail($id);
+        $article->onffonline = $uplow;
+        $article->update();
+        return redirect()->back();
+    }
+
     public function index()
     {
-        return view('Online.Article.index');
+        $article = Article::orderBy('created_at', 'desc')->get();
+        $_articleType =  $this->articleType;
+        return view('Online.Article.index',compact('article','_articleType'));
     }
 
     public function create()
@@ -27,45 +37,26 @@ class OnlineArticleController extends Controller
 
     public function store(Request $request)
     {
-        $this->create_update($request, "");
+        $this->create_update($request, "","");
+        return redirect()->route('onlinearticle.index');
     }
 
     public function edit($id)
     {
+        $article = Article::findOrFail($id);
+
         $TestData = [
-            "title" => "文章標題測試A",
-            "type" => "1",
-            "img" => "article_1536802451_titlepage.jpg",
-            "fe" => "jpg",
-            "point" => "9999",
-            "contents" => "文章內容測試A",
-            "model" => array(
-                0 => array(
-                  "title" => "模組標題A",
-                  "picaddress" => "article_1536802451_0.jpg",
-                  "fe" => "jpg",
-                  "contents" => "模組內容A",
-                ),
-                1 => array(
-                  "title" => "模組標題B",
-                  "picaddress" => "article_1536802451_1.jpg",
-                  "fe" => "jpg",
-                  "contents" => "模組內容B",
-                ),
-                2 => array(
-                  "title" => "模組標題C",
-                  "picaddress" => "article_1536802451_2.jpg",
-                  "fe" => "jpg",
-                  "contents" => "模組內容C",
-                ),
-                3 => array(
-                  "title" => "模組標題D",
-                  "picaddress" => "article_1536802451_3.jpg",
-                  "fe" => "jpg",
-                  "contents" => "模組內容D",
-                )
-            )
+            "_id" => $id,
+            "title" => $article->title,
+            "type" => $article->type,
+            "img" => $article->picloadjson['img'],
+            "fe" => $article->picloadjson['fe'],
+            "contents" => $article->contents,
+            "model" => $article->introductionjson
         ];
+
+        session(['rmimg' => $article->picloadjson['img'] ]);
+        session(['rmmodelimg' => $article->introductionjson ]);
 
         $getbase64 = imageload::upimgpath('images/article/'. $TestData['img']);
         $TestData['img'] = $getbase64;
@@ -80,15 +71,27 @@ class OnlineArticleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->create_update($request, "edit_");
+        imageload::rmpic('article', session('rmimg'));
+        imageload::modelrmpic('article', session('rmmodelimg'),'picaddress');
+        $this->create_update($request, "edit_",$id);
+        return redirect()->route('onlinearticle.index');
     }
 
     public function destroy($id)
     {
-        //
+        $article = Article::findOrFail($id);
+
+        $_rmimg = $article->picloadjson['img'];
+        $_rmmodelimg = $article->introductionjson;
+
+        imageload::rmpic('article', $_rmimg);
+        imageload::modelrmpic('article', $_rmmodelimg,'picaddress');
+
+        $article->delete();
+        return redirect()->back();
     }
 
-    private function create_update($request, $type){
+    private function create_update($request, $type,$id){
         $title            = $request->title;
         $articletype      = $request->articletype;
         $imagesrcupload   = $request->imagesrcupload;
@@ -100,7 +103,6 @@ class OnlineArticleController extends Controller
             'article', ($type.'titlepage')
         );
         $imageload->webimg();
-
         $titlepage_img = $imageload->geturl();
 
         //模組介紹
@@ -111,34 +113,44 @@ class OnlineArticleController extends Controller
         $modelpicaddress = [];
 
         for($i=0; $i<count($gcsrcfe); $i++){
-            $imageload = new imageload(
+            $modelimageload = new imageload(
                 $gcsrc[$i], $gcsrcfe[$i],'article', ($type.$i)
             );
-            $imageload->webimg();
+            $modelimageload->webimg();
             array_push($modelpicaddress,
                 array(
-                    'title' => $gcdivtitle[$i], 'picaddress' => $imageload->geturl(),
+                    'title' => $gcdivtitle[$i], 'picaddress' => $modelimageload->geturl(),
                     'fe' => $gcsrcfe[$i], 'contents' => $gcdivcontents[$i]
                 )
             );
         };
 
-        $article = [
-            'title' => $title,
-            'type' => $articletype,
-            'img' => $titlepage_img,
-            'fe' => $imagesrcuploadFe,
-            "point" => [],
-            "hotarticle" => 0,
-            'contents' => $contents,
-            'model' => $modelpicaddress
-        ];
-
-        dd( $article );
-        if($type === ""){
-
+        if($type == ""){
+            $article = new Article();
+            $article->title = $title;
+            $article->type = $articletype;
+            $article->picloadjson  = [
+                'img' => $titlepage_img,
+                'fe' => $imagesrcuploadFe,
+            ];
+            $article->point  = [];
+            $article->hotarticle = 0;
+            $article->onffonline = 0;
+            $article->contents = $contents;
+            $article->introductionjson = $modelpicaddress;
+            $article->save();
         }else{
-
-        };
+            $updatearticle = Article::findOrFail($id);
+            $updatearticle->title = $title;
+            $updatearticle->type = $articletype;
+            $updatearticle->picloadjson  = [
+                'img' => $titlepage_img,
+                'fe' => $imagesrcuploadFe,
+            ];
+            $updatearticle->onffonline = 0;
+            $updatearticle->contents = $contents;
+            $updatearticle->introductionjson = $modelpicaddress;
+            $updatearticle->update();
+        }
     }
 }

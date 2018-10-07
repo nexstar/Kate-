@@ -37,4 +37,28 @@ class jnadtokenController extends Controller
         );
     }
 
+    private $rmpic_success = [
+        'status' => '1|ok',
+        'action' => 'clean done',
+    ];
+
+    private $rmpic_fail = [
+        'status' => '0',
+    ];
+
+    public function rmpic($name){
+
+        $resp_status = $this->rmpic_fail;
+        if( !(strlen($name) <= 5) ){
+            imageload::rmpic('greenpet', $name);
+            $resp_status = $this->rmpic_success;
+        };
+
+        return response()->json(
+            [
+                'jnad' => $resp_status
+            ]
+        );
+    }
+
 }

@@ -3,7 +3,7 @@
 
     @include('Repeat.header')
 
-    <div class="container-fluid" style="margin-top: 40px;">
+    <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
             @include('Repeat.leftmenu')
@@ -36,7 +36,7 @@
 
                     <div class="row" style="margin:20px 0px;">
                         <p>發送名單</p>
-                        <div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 200px;border: 1px solid #dddddd;">
+                        <div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 180px;border: 1px solid #dddddd;">
 							@foreach($checkArray as $checkArraykey => $checkArrayvalue)
                             	<div class="col-md-2" style="padding-right: 0px;padding-left: 0px;margin: 10px 0px 10px 0px;text-align: center;">
     		                        <p>{{$checkArraykey +1}}. {{$checkArrayvalue['name']}} ( {{$checkArrayvalue['phone']}} )</p>
@@ -70,6 +70,8 @@
 
 @section('scripts')
     <script type="text/javascript">
+        $("#main_left").css({ "height" : ($( document ).height() - 120) });
+
         $('textarea').change(function(i){
             $("#countword").html($(this).val().length);
         });

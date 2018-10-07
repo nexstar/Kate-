@@ -12,7 +12,7 @@
                     <a href="{{ url('onlineproduct') }}" class="btn btn-warning">返回</a>
                 </div>
                 <div class="col-md-4" style="text-align: center;">
-                    <p style="font-size: 30px;">商品名稱</p>
+                    <p style="font-size: 30px;">{{ $TmpDB['title'] }}</p>
                 </div>
             </div>
 
@@ -35,7 +35,7 @@
                             <h4>購買次數: {{ $TmpDB['buycount'] }}</h4>
                         </div>
                         <div class="col-md-4">
-                            <h4>觀看次數: {{ $TmpDB['seecount'] }}</h4>
+                            <h4>觀看次數: {{ $TmpDB['point'] }}</h4>
                         </div>
                         <div class="col-md-4">
                             <h4>上架日期: {{ $TmpDB['date'] }}</h4>
@@ -67,7 +67,8 @@
                                 <div class="thumbnail">
                                     <span>第{{ $i+1 }}個加購</span>
                                     <img style="margin: 5px 0px;width: 100%;" src="{{ $TmpDB['addpd'][$i]['src'] }}" alt="#">
-                                    <p>名稱: {{ $TmpDB['addpd'][$i]['name'] }}</p>
+                                    <p>編號: {{ $TmpDB['addpd'][$i]['pdid'] }}</p>
+                                    <p>名稱: {{ $TmpDB['addpd'][$i]['pdname'] }}</p>
                                     <p>加購價: {{ $TmpDB['addpd'][$i]['money'] }}</p>
                                 </div>
                             </div>

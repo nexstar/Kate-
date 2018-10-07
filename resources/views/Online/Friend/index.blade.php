@@ -17,15 +17,16 @@
                 </div>
 
                 <div class="row">
-                    @for($i=0; $i<9; $i++)
-                        {!! Form::open([ 'id' => ('editfriendfrom'.$i), 'method' => 'PUT', 'action' => ['OnlineFriendController@update', $i] ]) !!}
+                    @for($i=0;$i<count($goblade);$i++)
+                        {!! Form::open([ 'id' => ('editfriendfrom'.($i+1)), 'method' => 'PUT', 'action' => ['OnlineFriendController@update', ($i+1)] ]) !!}
                         <div class="col-md-4" style="text-align: center;">
                             <div class="thumbnail">
-                                <span>{{ $i+1 }}.朋友們的肯定</span>
-                                <img style="margin: 5px 0px;width: 100%;" src="{{ url('images/friend/friend_1536903625_0.jpg') }}" alt="#">
-                                <input id="friendsrc{{$i}}" name="friendsrc"  type="hidden" value="#">
-                                <input id="friendfe{{$i}}" name="friendfe" type="hidden" value="#">
-                                <button onclick="editFriend({{$i}})" type="button" class="btn btn-block btn-warning">修改</button>
+                                <span>{{ ($i+1) }}.朋友們的肯定</span>
+                                <img style="margin: 5px 0px;width: 100%;" src="{{ $goblade[$i]['src'] }}" alt="#">
+                                <input id="friendsrc{{ ($i+1) }}" name="friendsrc"  type="hidden" value="{{ $goblade[$i]['src'] }}">
+                                <input id="friendfe{{ ($i+1) }}" name="friendfe" type="hidden" value="{{ $goblade[$i]['fe'] }}">
+                                <input name="friendid" type="hidden" value="{{ $goblade[$i]['_id'] }}">
+                                <button onclick="editFriend({{ ($i+1) }})" type="button" class="btn btn-block btn-warning">修改</button>
                             </div>
                         </div>
                         {!! Form::close() !!}
@@ -75,8 +76,14 @@
         };
 
         function yeseditfriend() {
-            if(confirm("確定修改朋友的肯定？？")){
-                $("#editfriendfrom" + $editid).submit();
+            $_friendsrc =  $("#friendsrc"+$editid).val();
+
+            if($_friendsrc.length <100 ){
+                alert("照片尚未上傳");
+            }else{
+                if(confirm("確定修改朋友的肯定？？")){
+                    $("#editfriendfrom" + $editid).submit();
+                };
             };
         };
 

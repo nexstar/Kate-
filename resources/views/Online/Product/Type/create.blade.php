@@ -6,9 +6,9 @@
     <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
-            @include('Repeat.leftmenu')
+            {{--@include('Repeat.leftmenu')--}}
 
-            <div id="main_right" class="col-md-10" style="width:88.33333333%;">
+            <div id="main_right" class="col-md-12">
 
                 <div class="col-md-12">
 
@@ -38,16 +38,17 @@
                             <div class="row" style="margin:0px 0px 10px 0px">
                                 <label>勾選商品</label>
                                 <div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 300px;border: 1px solid #dddddd;">
-                                    @for($i=0; $i<50; $i++)
-                                    <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
-                                        <div class="input-group">
-                                            <div class="input-group-addon">
-                                                <input type="checkbox" name="addcheckboxgroup[]" value="{{$i}}">
+                                    @foreach($product as $productlist)
+                                        <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <input type="checkbox" name="addcheckboxgroup[]" value="{{ $productlist->_id }}">
+                                                </div>
+                                                <input id="input{{$productlist->_id}}" value="{{ $productlist->title }}" style="text-align: center;" type="text" class="form-control" disabled="true">
                                             </div>
-                                            <input value="商品名稱{{$i}}" style="text-align: center;" type="text" class="form-control" disabled="true">
                                         </div>
-                                    </div>
-                                    @endfor
+                                    @endforeach
+                                    <div id="hiddenpdname"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -73,10 +74,11 @@
             let checkcount = 0;
             $("input:checkbox:checked[name='addcheckboxgroup[]']").each(function(index) {
                 checkcount++;
+                let _pdname = $(("#input"+$(this).val())).val();
+                $("#hiddenpdname").append('<input type="hidden" name="addnamegroup[]" value="'+_pdname+'">');
             });
 
             let _name = $('[name="name"]').val();
-
             if(_name == ""){
                 alert("名稱不能為空");
             }else{

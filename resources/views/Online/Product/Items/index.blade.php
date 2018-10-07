@@ -44,39 +44,38 @@
                                     </td>
                                     {!! Form::close() !!}
                                 </tr>
-                                @for($i=0;$i<count($bigitem);$i++)
+                                @foreach($pdbigitems as $pdbigitemslist)
                                     <tr style="cursor: default;">
                                         <td style="font-size: 20px;">
                                             {!! form::open(
                                                 [
                                                     'id' => 'updatebigitemform', 'method' => 'PUT',
                                                     'action' => [
-                                                        'OnlineProductItemsController@bigitemupdate', $bigitem[$i]['id']
+                                                        'OnlineProductItemsController@bigitemupdate', $pdbigitemslist->_id
                                                     ]
                                                 ])
                                             !!}
-                                                <input disabled id="editbigitem{{ $bigitem[$i]['id'] }}" name="editbigitem" value="{{ $bigitem[$i]['name'] }}" type="text" class="form-control">
+                                                <input disabled id="editbigitem{{$pdbigitemslist->_id}}" name="editbigitem" value="{{$pdbigitemslist->name}}" type="text" class="form-control">
                                             {!! Form::close() !!}
                                         </td>
                                         <td>
-                                            <div id="editbigitemdiv{{$bigitem[$i]['id']}}">
+                                            <div id="editbigitemdiv{{$pdbigitemslist->_id}}">
                                                 {!! form::open(
                                                     [
                                                         'id' => 'rmbigitem', 'method' => 'DELETE',
                                                         'action' => [
-                                                            'OnlineProductItemsController@bigitemdestroy', $bigitem[$i]['id']
+                                                            'OnlineProductItemsController@bigitemdestroy', $pdbigitemslist->_id
                                                         ]
                                                     ])
                                                 !!}
                                                     <button onclick="btnrmbigitem()" type="button" style="margin-bottom: 5px;" class="btn btn-block btn-danger">刪除</button>
                                                 {!! Form::close() !!}
-                                                <button onclick="btneditbigitem({{$bigitem[$i]['id']}})" type="button" class="btn btn-block btn-warning">修改</button>
+                                                <button onclick="btneditbigitem({{$pdbigitemslist->_id}})" type="button" class="btn btn-block btn-warning">修改</button>
                                             </div>
-                                            <button id="btnupdatebigitem{{$bigitem[$i]['id']}}" onclick="btnupdatebigitem()" type="button" style="display: none;" class="btn btn-block btn-info">確定修改</button>
+                                            <button id="btnupdatebigitem{{$pdbigitemslist->_id}}" onclick="btnupdatebigitem()" type="button" style="display: none;" class="btn btn-block btn-info">確定修改</button>
                                         </td>
                                     </tr>
-
-                                @endfor
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -117,7 +116,7 @@
             if($(this).val() != "請選擇大項"){
                 $.ajax({
                     type:'get',
-                    url: "{{ url('/OnlineProductItemsController/small/123123') }}",
+                    url: "{{ url('/OnlineProductItemsController/small') }}" + '/' + $(this).val(),
                     data:'_token = <?php echo csrf_token() ?>',
                     async: true,
                     success:function(data){
@@ -132,7 +131,7 @@
             $("#addsmalltable").empty();
             $tmp  = "";
             $tmp += '<tr style="cursor: default;">';
-                $tmp += '<?php echo Form::open(['id' => 'smallitemform','files' => true ]); ?>';
+                $tmp += '<?php echo Form::open(['id' => 'smallitemform','method' => 'POST','action' => 'OnlineProductItemsController@smallitemstore','files' => true ]); ?>';
                     $tmp += '<td style="width: 15%;font-size: 20px;">';
                         $tmp += '<input name="smallitemtitle" type="text" style="width: 100%;" class="form-control">';
                     $tmp += '</td>';
@@ -144,14 +143,14 @@
             $.each($data, function (key, val) {
                 $tmp += '<tr style="cursor: default;">';
                     $tmp += '<td style="font-size: 20px;">';
-                            $tmp += '<input disabled id="editsmallitem'+key+'" name="editsmallitem" value="'+val+'" type="text" class="form-control">';
+                            $tmp += '<input disabled id="editsmallitem'+val['_id']+'" name="editsmallitem" value="'+val['name']+'" type="text" class="form-control">';
                     $tmp += '</td>';
                     $tmp += '<td>';
-                        $tmp += '<div id="editsmallitemdiv'+key+'">';
-                            $tmp += '<button onclick="btnrmsmallitem('+key+')" type="button" style="margin-bottom: 5px;" class="btn btn-block btn-danger">刪除</button>';
-                            $tmp += '<button onclick="btneditsmallitem('+key+')" type="button" class="btn btn-block btn-warning">修改</button>';
+                        $tmp += '<div id="editsmallitemdiv'+val['_id']+'">';
+                            $tmp += '<button onclick="btnrmsmallitem(\''+val['_id']+'\')" type="button" style="margin-bottom: 5px;" class="btn btn-block btn-danger">刪除</button>';
+                            $tmp += '<button onclick="btneditsmallitem(\''+val['_id']+'\')" type="button" class="btn btn-block btn-warning">修改</button>';
                         $tmp += '</div>';
-                        $tmp += '<button id="btnupdatesmallitem'+key+'" onclick="btnupdatesmallitem()" type="button" style="display: none;" class="btn btn-block btn-info">確定修改</button>';
+                        $tmp += '<button id="btnupdatesmallitem'+val['_id']+'" onclick="btnupdatesmallitem()" type="button" style="display: none;" class="btn btn-block btn-info">確定修改</button>';
                     $tmp += '</td>';
                 $tmp += '</tr>';
             });
@@ -183,8 +182,10 @@
                         },
                         async: true,
                         success:function(data){
-                            alert("修改成功!!");
-                            window.location.href = "OnlineProductItemsController";
+                            if(data === "1|ok"){
+                                alert("修改成功!!");
+                                window.location.href = "OnlineProductItemsController";
+                            };
                         }
                     });
                 };

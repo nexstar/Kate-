@@ -3,7 +3,7 @@
 
     @include('Repeat.header')
 
-    <div class="container-fluid" style="margin-top: 40px;">
+    <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
             @include('Repeat.leftmenu')
@@ -45,41 +45,40 @@
                                     <th>動作</th>
                                 </tr>
                                 </thead>
-<tbody id="main_table_tbody">
+                                <tbody id="main_table_tbody">
+                                @foreach($customerinfo as $customerinfokey => $customerinfovalue)
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" name="ch_user[]" value="{{ $customerinfovalue->id }}">
+                                        </td>
 
-@foreach($customerinfo as $customerinfokey => $customerinfovalue)
-    <tr>
-        <td>
-            <input type="checkbox" name="ch_user[]" value="{{ $customerinfovalue->id }}">
-        </td>
-         
-        <td>{{ $customerinfovalue->firstname.$customerinfovalue->lastname }}</td>
-        <td>{{ ($customerinfovalue->sex == "1") ? '男性' : '女性' }}</td>
-        <td>{{ $customerinfovalue->privatemobile }}</td>
-        <td style="width: 50%">
-            <p class="text-justify">
-                {!! preg_replace("/\r\n|\r|\n/",'<br/>', $customerinfovalue->remark) !!}
-            </p>
-        </td>
-        <td>
-			<div class="col-md-6">
-                {!! Form::open(['id'=> ('removeform'.$customerinfokey), 'method'=>'DELETE', 'action'=>['CustomerInfoController@destroy', $customerinfovalue->id] ]) !!}   
-                    <div class="form-group">
-                        <button onclick="btn_remove_submit({{$customerinfokey}})" type="button" class="btn btn-block btn-danger">刪除</button>
-                    </div>
-                {!! Form::close() !!}
-            </div>
-            <div class="col-md-6">
-                {!! Form::open(['id'=> ('modifyform'.$customerinfokey), 'method'=>'GET', 'action'=>['CustomerInfoController@edit', $customerinfovalue->id] ]) !!}   
-                    <div class="form-group">
-                        <button onclick="btn_modify_submit({{$customerinfokey}})" type="button" class="btn btn-block btn-warning">修改</button>
-                    </div>
-                {!! Form::close() !!}
-            </div>
-        </td>
-    </tr>
-@endforeach
-</tbody>
+                                        <td>{{ $customerinfovalue->firstname.$customerinfovalue->lastname }}</td>
+                                        <td>{{ ($customerinfovalue->sex == "1") ? '男性' : '女性' }}</td>
+                                        <td>{{ $customerinfovalue->privatemobile }}</td>
+                                        <td style="width: 50%">
+                                            <p class="text-justify">
+                                                {!! preg_replace("/\r\n|\r|\n/",'<br/>', $customerinfovalue->remark) !!}
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <div class="col-md-6">
+                                                {!! Form::open(['id'=> ('removeform'.$customerinfokey), 'method'=>'DELETE', 'action'=>['CustomerInfoController@destroy', $customerinfovalue->id] ]) !!}
+                                                    <div class="form-group">
+                                                        <button onclick="btn_remove_submit({{$customerinfokey}})" type="button" class="btn btn-block btn-danger">刪除</button>
+                                                    </div>
+                                                {!! Form::close() !!}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {!! Form::open(['id'=> ('modifyform'.$customerinfokey), 'method'=>'GET', 'action'=>['CustomerInfoController@edit', $customerinfovalue->id] ]) !!}
+                                                    <div class="form-group">
+                                                        <button onclick="btn_modify_submit({{$customerinfokey}})" type="button" class="btn btn-block btn-warning">修改</button>
+                                                    </div>
+                                                {!! Form::close() !!}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -94,9 +93,7 @@
 
 @section('scripts')
     <script type="text/javascript">
-        $("#main_left").css({ "min-height" : ($( window ).height() - 50) });
-
-        var _main_table = $( window ).height() - 255;
+        var _main_table = $( window ).height() - 268;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
 
         $('input[name="ch_all"]').on('click',function(){

@@ -3,79 +3,70 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\pdbigitem;
+use App\pdsmallitem;
 
 class OnlineProductItemsController extends Controller
 {
-    public function smallshow($id){
-        $smallitem = [];
-        for ($i=0; $i<5; $i++){
-            $rmid = (rand(10,32767) * 100);
-            array_push($smallitem, $rmid);
-        };
-        return json_encode($smallitem);
+    public function smallshow($name){
+        $pdsmallitems = pdsmallitem::where('bigname', $name)->get();
+        return json_encode($pdsmallitems);
     }
 
     public function smallitemstore(Request $request){
         $_smallitemtitle = $request->smallitemtitle;
         $_smallid = $request->smallid;
-//        dd($request->all());
-//        return redirect()->back();
-        return $_smallitemtitle;
+        pdsmallitem::create(['bigname' => $_smallid, 'name' => $_smallitemtitle]);
+        return redirect()->back();
     }
 
     public function smallitemupdate(Request $request, $id){
         $_editsmallitem = $request->editsmallitem;
-        $tmp = [
-            'id' => $id,
-            'newname' => $_editsmallitem,
-        ];
-//        dd($tmp);
-//        return redirect()->back();
-        return $tmp;
+
+        $pdsmallitems = pdsmallitem::findOrFail($id);
+        $pdsmallitems->name = $_editsmallitem;
+        $pdsmallitems->update();
+        return "1|ok";
     }
 
     public function smallitemdestroy($id){
-        return $id;
+        pdsmallitem::findOrFail($id)->delete();
+        return redirect()->back();
     }
 
     public function index(){
-        $bigitem = [];
-        for ($i=0; $i<5; $i++){
-            $rmid = (rand(10,32767) * 100);
-            array_push($bigitem,
-                array(
-                    'id' => $rmid,
-                    'name' => $rmid
-                )
-            );
-        };
+        $pdbigitems = pdbigitem::orderBy('created_at','desc')->get();
+
         $smallitem = [
-            '請選擇大項' => '請選擇大項',
-            '11111' => 'AAAAAA',
-            '22222' => 'BBBBBB',
-            '33333' => 'CCCCCC',
-            '44444' => 'DDDDDD',
-            '55555' => 'EEEEEE',
+            "請選擇大項" => "請選擇大項"
         ];
-        return view('Online.Product.Items.index',compact('bigitem','smallitem'));
+
+        foreach ($pdbigitems as $pdbigitemslist){
+            $smallitem[$pdbigitemslist->name] = $pdbigitemslist->name;
+        };
+
+        return view('Online.Product.Items.index',compact('pdbigitems','smallitem'));
     }
 
     public function bigitemstore(Request $request){
         $_bigitemtitle = $request->bigitemtitle;
+        pdbigitem::create(['name' => $_bigitemtitle]);
         return redirect()->back();
     }
 
     public function bigitemupdate(Request $request, $id){
         $_editbigitem = $request->editbigitem;
-        $tmp = [
-            'id' => $id,
-            'newname' => $_editbigitem,
-        ];
+
+        $pdbigitems = pdbigitem::findOrFail($id);
+        $pdbigitems->name = $_editbigitem;
+        $pdbigitems->update();
+
         return redirect()->back();
     }
 
     public function bigitemdestroy($id){
-        dd($id);
+        pdbigitem::findorFail($id)->delete();
+        return redirect()->back();
     }
 
 }

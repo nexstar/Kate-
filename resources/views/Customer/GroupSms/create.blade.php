@@ -3,21 +3,20 @@
 
     @include('Repeat.header')
 
-    <div class="container-fluid" style="margin-top: 40px;">
+    <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
-            @include('Repeat.leftmenu')
-
-            <div id="main_right" class="col-md-10" style="width:88.33333333%;">
+            <div id="main_right" class="col-md-12">
 
                 <div class="col-md-12">
 
-                    <div class="row">
-
-                        <div class="col-md-4 col-md-offset-4" style="text-align: center;">
-                            <h2>客戶-(新增)簡訊群組</h2>
+                    <div class="row" style="padding-top: 20px;">
+                        <div class="col-md-4">
+                            <a href="{{ url('customergroup') }}" class="btn btn-warning">返回</a>
                         </div>
-
+                        <div class="col-md-4" style="text-align: center;">
+                            <p style="font-size: 30px;">客戶-(新增)簡訊群組</p>
+                        </div>
                     </div>
 
                     <div class="row" style="margin:20px 0px;">
@@ -42,7 +41,7 @@
 
                             <div class="row" style="margin:0px 0px 10px 0px">
                                 <p>請點選需要加入群組的客戶</p>
-								<div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 300px;border: 1px solid #dddddd;">
+								<div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 280px;border: 1px solid #dddddd;">
 								    @foreach($customerinfo as $customerinfokey => $customerinfovalue )
 								    <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
 								        <div class="input-group">
@@ -78,7 +77,8 @@
 
 @section('scripts')
 	<script type="text/javascript">
-		$("#main_left").css({ "min-height" : ($( window ).height() - 50) });
+
+
 		function btn_check_submit(){
 		    let Check_Tmp = '';
 

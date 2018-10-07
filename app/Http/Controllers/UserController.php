@@ -14,13 +14,13 @@ class UserController extends Controller
 
     public function edit()
     {
-		$users = User::find('5b7153ec7c82e85d1036e8a1');
+		$users = User::find(env('MONGO_DB_ROOT'));
 		return view('Customer.headinfo', compact('users'));
     }
 
     public function update(Request $request)
     {
-		$users = User::find('5b7153ec7c82e85d1036e8a1');
+		$users = User::find(env('MONGO_DB_ROOT'));
         switch ($request->type) {
 			case '1':
 				$msg = [
@@ -99,4 +99,3 @@ class UserController extends Controller
     }
 
 }
-

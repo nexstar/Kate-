@@ -6,9 +6,7 @@
     <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
-            @include('Repeat.leftmenu')
-
-            <div id="main_right" class="col-md-10" style="width:88.33333333%;">
+            <div id="main_right" class="col-md-12">
 
                 <div class="col-md-12">
 
@@ -24,33 +22,31 @@
                         <div class="col-md-12">
                             {!! Form::open([
                                 'id' => 'producttypeform','method' => 'PUT',
-                                'action' => ['OnlineProductTpyeController@update','1']
+                                'action' => ['OnlineProductTpyeController@update', $maxgroup['id']]
                                 ])
                             !!}
                             <div class="row">
                                 <div class="col-md-12" style="height: 97px;">
                                     <div class="form-group">
                                         <label>名稱</label>
-                                        <input value="{{ $tmpmix['name'] }}" id="name" name="name" type="text" class="form-control">
+                                        <input value="{{ $maxgroup['name'] }}" id="name" name="name" type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>
                             <div class="row" style="margin:0px 0px 10px 0px">
                                 <label>勾選商品</label>
                                 <div class="col-md-12" style="border-radius: 5px;overflow-y: scroll;height: 300px;border: 1px solid #dddddd;">
-                                    @foreach($tmpmix['checkgrouped'] as $tmpmixlist )
+                                    @for($i=0;$i<count($maxgroup['group']);$i++)
                                         <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
-                                                    <input {{ ($tmpmixlist['status']==1)?"checked":"" }} type="checkbox" name="editcheckboxgroup[]" value="{{ $tmpmixlist['id'] }}">
+                                                    <input {{ ($maxgroup['group'][$i]['status']==1)?"checked":"" }} type="checkbox" name="editcheckboxgroup[]" value="{{ $maxgroup['group'][$i]['id'] }}">
                                                 </div>
-                                                <input value="{{ $tmpmixlist['name'] }}" style="text-align: center;" type="text" class="form-control" disabled="true">
+                                                <input id="input{{ $maxgroup['group'][$i]['id'] }}" value="{{ $maxgroup['group'][$i]['name'] }}" style="text-align: center;" type="text" class="form-control" disabled="true">
                                             </div>
                                         </div>
-                                        @if( ( $tmpmixlist['status'] == 1 ) )
-                                            <input type="hidden" name="oldcheck[]" value="{{ $tmpmixlist['id'] }}">
-                                        @endif
-                                    @endforeach
+                                    @endfor
+                                    <div id="hiddenpdname"></div>
                                 </div>
                             </div>
                             <div class="row">
@@ -74,8 +70,10 @@
     <script type="text/javascript">
         function btnproducttype() {
             let checkcount = 0;
-            $("input:checkbox:checked[name='addcheckboxgroup[]']").each(function(index) {
+            $("input:checkbox:checked[name='editcheckboxgroup[]']").each(function(index) {
                 checkcount++;
+                let _pdname = $(("#input"+$(this).val())).val();
+                $("#hiddenpdname").append('<input type="hidden" name="addnamegroup[]" value="'+_pdname+'">');
             });
 
             let _name = $('[name="name"]').val();

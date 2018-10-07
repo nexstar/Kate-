@@ -3,7 +3,7 @@
 
     @include('Repeat.header')
 
-    <div class="container-fluid" style="margin-top: 40px;">
+    <div class="container-fluid" style="margin-top: 55px;">
         <div class="row">
 
             @include('Repeat.leftmenu')
@@ -84,8 +84,8 @@
 
 @section('scripts')
     <script type="text/javascript">
-		 $("#main_left").css({ "min-height" : ($( window ).height() - 50) });
-        var _main_table = $( window ).height() - 255;
+
+        var _main_table = $( window ).height() - 273;
         $("#main_table").css({"height":_main_table, "overflow-y": "scroll"});
 		function btn_modify_submit($data){
             if(confirm("確定修改？？")){

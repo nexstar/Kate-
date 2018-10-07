@@ -23,16 +23,29 @@
                 </div>
 
                 <div class="row">
-                    @for($i=0; $i<6; $i++)
+                    @foreach($news as $newskey => $newsval)
                         <div class="col-md-4" style="text-align: center;">
                             <div class="thumbnail">
-                                <p style="font-size: 20px;">2018/9/13, 11:51:00 PM</p>
-                                <span>{{ $i+1 }}.新聞</span>
-                                <img style="margin: 5px 0px;width: 100%;" src="{{ url('images/new/new_1536923234_left.jpg') }}">
-                                <a href="{{ route('onlinenew.edit', $i) }}" class="btn btn-block btn-warning">修改</a>
+                                <p style="font-size: 20px;">{{ $newsval->title}}</p>
+                                <span>{{ $newsval->date }}</span>
+                                <img style="margin: 5px 0px;width: 100%;" src="{{ 'http://docker.bmskflorist:4848/images/new/'.$newsval->left['url'] }}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <a href="{{ route('onlinenew.edit', $newsval->_id) }}" class="btn btn-block btn-warning">修改</a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        {!! Form::open([
+                                            'id' => ('rmnews'.$newsval->_id), 'method' => 'DELETE',
+                                            'action' => ['OnlineNewController@destroy',$newsval->_id]
+                                            ])
+                                        !!}
+                                        {!! Form::close() !!}
+                                        <button onclick="btnrmnews('{{ $newsval->_id }}')" type="button" class="btn btn-block btn-danger">刪除</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    @endfor
+                    @endforeach
                 </div>
 
             </div>
@@ -45,6 +58,11 @@
 @section('scripts')
     <script type="text/javascript">
         $("#main_left").css({ "height" : ($( document ).height()) });
+        function btnrmnews($id) {
+            if(confirm("確定刪除???")){
+                $("#rmnews"+$id).submit();
+            };
+        };
     </script>
 
     <style type="text/css">

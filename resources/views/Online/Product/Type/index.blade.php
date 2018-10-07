@@ -38,24 +38,27 @@
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                    @for($i=0;$i<count($tmpdb);$i++)
+                                    @for($i=0;$i<count($showdata);$i++)
                                     <tr style="cursor: default;">
-                                        <td style="width:20%;font-size: 20px;">{{ $tmpdb[$i]['name'] }}</td>
-                                        <td style="width:20%;font-size: 20px;">{{ count($tmpdb[$i]['addcheckboxgroup']) }}</td>
+                                        <td style="width:20%;font-size: 20px;">{{ $showdata[$i]['name'] }}</td>
                                         <td style="width:20%;font-size: 20px;">
-                                            @for($j=0;$j<count($tmpdb[$i]['addcheckboxgroup']);$j++)
-                                                <p>{{ $tmpdb[$i]['addcheckboxgroup'][$j]['name'] }}</p>
+                                            @for($j=0;$j<count($showdata[$i]['group']);$j++)
+                                                <span>{{ $showdata[$i]['group'][$j]['name']}}</span>
+                                                @if(($j+1) != count($showdata[$i]['group']))
+                                                    <span>,</span>
+                                                @endif
                                             @endfor
                                         </td>
+                                        <td style="width:20%;font-size: 20px;">{{ count($showdata[$i]['group']) }}</td>
                                         <td style="width:10%;">
                                             {!! Form::open([
-                                                'id' => ('rmproducttype'.$tmpdb[$i]['id']), 'method' => 'DELETE',
-                                                'action' => ['OnlineProductTpyeController@destroy', $tmpdb[$i]['id'] ]
+                                                'id' => ('rmproducttype'.$showdata[$i]['id']), 'method' => 'DELETE',
+                                                'action' => ['OnlineProductTpyeController@destroy', $showdata[$i]['id'] ]
                                                 ])
                                             !!}
-                                                <button onclick="btnrmproducttype('{{ $tmpdb[$i]['id'] }}')" type="button" class="btn btn-block btn-danger">刪除</button>
+                                                <button onclick="btnrmproducttype('{{ $showdata[$i]['id'] }}')" type="button" class="btn btn-block btn-danger">刪除</button>
                                             {!! Form::close() !!}
-                                            <a href="{{ route('onlineproducttpye.edit', $tmpdb[$i]['id'] ) }}" style="margin-top: 5px;" class="btn btn-block btn-warning">修改</a>
+                                            <a href="{{ route('onlineproducttpye.edit', $showdata[$i]['id'] ) }}" style="margin-top: 5px;" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
                                     @endfor

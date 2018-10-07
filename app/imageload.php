@@ -55,4 +55,19 @@ class imageload extends Model
         return $base64;
     }
 
+    //刪除封面
+    public static function rmpic($dirname,$rmpic){
+        $rmdatapath = public_path('/images/'.$dirname.'/');
+        unlink($rmdatapath.$rmpic);
+    }
+
+    //刪除模組照片
+    public static function modelrmpic($dirname,$rmarray,$arraypicname){
+        $rmdatapath = public_path('/images/'.$dirname.'/');
+
+        for($i=0;$i<count($rmarray);$i++){
+            unlink($rmdatapath.$rmarray[$i][$arraypicname]);
+        };
+    }
+
 }

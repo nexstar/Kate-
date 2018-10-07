@@ -16,22 +16,26 @@
                     <div class="col-md-4" style="text-align: center;">
                         <p style="font-size: 30px;">電商-(修改)新聞</p>
                     </div>
-                    {!! Form::open(['id' => 'editNewsform', 'method' => 'PUT', 'action' => ['OnlineNewController@update', '1'] ]) !!}
+                    {!! Form::open(['id' => 'editNewsform', 'method' => 'PUT', 'action' => ['OnlineNewController@update', $TestData['_id']] ]) !!}
                     <div class="col-md-4" style="text-align: right;">
                         <button onclick="newsave()" type="button" class="btn btn-primary">送出</button>
                     </div>
                     <div id="newsleft" class="col-md-6">
                         <div class="form-group">
-                            <label for="name">新聞標題</label>
+                            <label>新聞標題</label>
                             <input value="{{ $TestData['title'] }}" id="title" name="title" type="text" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="name">新聞日期</label>
-                            <input value="{{ $TestData['data'] }}" id="date" name="date" type='text' class="form-control"/>
+                            <label>參考</label>
+                            <input value="{{ $TestData['ref'] }}" id="ref" name="ref" type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>新聞日期</label>
+                            <input value="{{ $TestData['date'] }}" id="date" name="date" type='text' class="form-control"/>
                         </div>
                         <div class="col-md-6" style="padding-left: 0px;">
                             <div class="form-group">
-                                <label for="name">照片</label>
+                                <label>照片</label>
                                 <input id="Newpicloadleft" type="file" class="form-control">
                             </div>
                         </div>
@@ -46,7 +50,7 @@
                     <div class="col-md-6">
                         <div class="col-md-6" style="padding-right: 0px;">
                             <div class="form-group">
-                                <label for="name">照片</label>
+                                <label>照片</label>
                                 <input id="Newpicloadright" type="file" class="form-control">
                             </div>
                         </div>
@@ -78,21 +82,25 @@
             let _date = $("#date").val();
             let _newssrcleft = $("#newssrcleft").val();
             let _newssrcright = $("#newssrcright").val();
-
+            let _ref = $("#ref").val();
             if(_title === ""){
                 alert("標題未填寫");
             }else{
-                if(_date === ""){
-                    alert("日期未填寫");
+                if(_ref === ""){
+                    alert("參考網址未填寫");
                 }else{
-                    if(_newssrcleft.length < 100){
-                        alert("封面照片尚未上傳");
+                    if(_date === ""){
+                        alert("日期未填寫");
                     }else{
-                        if(_newssrcright.length < 100){
-                            alert("內容照片尚未上傳");
+                        if(_newssrcleft.length < 100){
+                            alert("封面照片尚未上傳");
                         }else{
-                            if(confirm("確定修改新聞??")){
-                                $("#editNewsform").submit();
+                            if(_newssrcright.length < 100){
+                                alert("內容照片尚未上傳");
+                            }else{
+                                if(confirm("確定修改新聞??")){
+                                    $("#editNewsform").submit();
+                                };
                             };
                         };
                     };
