@@ -2,20 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\getnotifiread;
 use Illuminate\Http\Request;
-use App\GreenPetSingleNotifi;
+use App\GreenPetGroupNotifi;
 use App\imageload;
 use App\appwebuserelempush;
 use App\appwebuser;
 use App\petbigitem;
 use App\petsmallitem;
+use MongoDB\BSON\ObjectID as ObjectID;
 
 class GreenPetNotifiSingleController extends Controller
 {
-    public function show($id){}
+    public function show($id){
+        $DepthSingle = GreenPetGroupNotifi::findOrFail($id);
+
+        $TmpViewarray = [
+            'id' => $DepthSingle->_id,
+            'four' => $DepthSingle->fouritem,
+        ];
+
+        $notifireadinfo = new getnotifiread($DepthSingle->sid);
+
+        $appwebusers   = appwebuser::all();
+        $petbigitems   = petbigitem::all();
+        $petsmallitems = petsmallitem::all();
+
+        $depths = $notifireadinfo->depthuser();
+        $depthuser = $depths['depth'];
+
+
+        session(['fouritem' => $DepthSingle->fouritem ]);
+        session(['depth' => $depths ]);
+
+        return view('GreenPet.Notifi.Single.depth',
+            compact(
+                'TmpViewarray','appwebusers',
+                'petbigitems','petsmallitems','depthuser'
+            )
+        );
+
+    }
+
+    public function depth(Request $request){
+        $this->create_update($request,"", session('depth'));
+        return redirect('greenpetnotifisingle');
+    }
 
     public function info($id){
-        $single = GreenPetSingleNotifi::findOrFail($id);
+        $single = GreenPetGroupNotifi::findOrFail($id);
 
         $TmpViewarray = [
             'title' => $single->title,
@@ -31,7 +66,7 @@ class GreenPetNotifiSingleController extends Controller
     }
 
     public function notifi($id){
-        $Singles = GreenPetSingleNotifi::findOrFail($id);
+        $Singles = GreenPetGroupNotifi::findOrFail($id);
         $_fouritem = $Singles->fouritem;
         $AllUserarray = [];
 
@@ -56,7 +91,7 @@ class GreenPetNotifiSingleController extends Controller
             };
 
         //Insert To appwebuser and Send Notifi
-        $elempush = new appwebuserelempush($id, $AllUserarray, $Singles->title);
+        $elempush = new appwebuserelempush($Singles->sid, $AllUserarray, $Singles->title);
         $elempush->greenpet_notifi();
 
         // finish Single Notifi Send
@@ -67,8 +102,29 @@ class GreenPetNotifiSingleController extends Controller
 
     public function index()
     {
-        $single = GreenPetSingleNotifi::where('reservemdh','=','null')->orderBy('created_at','desc')->get();
-        return view('GreenPet.Notifi.Single.index',compact('single'));
+        $fiterGroup = GreenPetGroupNotifi::where('reservemdh','=','null')->orderBy('created_at','desc')->get();
+
+        $single = [];
+        $greenpetsinglenotifis = [];
+        foreach ($fiterGroup as $result){
+            if( $result->path == "GreenPetSingle"){
+                $notifireadinfo = new getnotifiread($result->sid);
+                array_push($greenpetsinglenotifis,array(
+                    'id' => $result->_id,
+                    'link' => $result->link,
+                    'src' => $result->picjson['src'],
+                    'title' => $result->title,
+                    'contents' => $result->contents,
+                    'notifi' => $result->notifi,
+                    'read' => $notifireadinfo->read(),
+                    'total' => $notifireadinfo->total(),
+                    'depth' => $result->depth
+                ));
+
+            };
+        };
+
+        return view('GreenPet.Notifi.Single.index',compact('greenpetsinglenotifis'));
     }
 
     public function create()
@@ -81,13 +137,13 @@ class GreenPetNotifiSingleController extends Controller
 
     public function store(Request $request)
     {
-        $this->create_update($request, "",'');
+        $this->create_update($request,"",'');
         return redirect('greenpetnotifisingle');
     }
 
     public function edit($id)
     {
-        $single = GreenPetSingleNotifi::findOrFail($id);
+        $single = GreenPetGroupNotifi::findOrFail($id);
 
         $base64 = imageload::upimgpath('images/GreenPetSingle/'.$single->picjson['src']);
 
@@ -112,31 +168,41 @@ class GreenPetNotifiSingleController extends Controller
     public function update(Request $request, $id)
     {
         imageload::rmpic('GreenPetSingle', session('rmimg'));
-        $this->create_update($request, "edit_",$id);
+        $this->create_update($request,$id,'');
         return redirect('greenpetnotifisingle');
     }
 
     public function destroy($id)
     {
-        $killGroup = GreenPetSingleNotifi::findOrFail($id);
+        $killGroup = GreenPetGroupNotifi::findOrFail($id);
         imageload::rmpic('GreenPetSingle',$killGroup->picjson['src']);
         $killGroup->delete();
         return redirect()->back();
     }
 
-    private function create_update(Request $request, $type,  $id)
+    private function create_update(Request $request, $id, $depth)
     {
         $_title    = $request->title;
         $_link     = $request->link;
         $_base64   = $request->imagesrcupload;
         $_fe       = $request->imagesrcuploadFe;
-        $_gender   = explode('_', $request->radiosingle);
+
+        if($depth != ""){
+            $fouritem = session('fouritem');
+            $_gender[0] = $fouritem['type'];
+            $_gender[1] =$fouritem['id'];
+        }else{
+            $_gender = explode('_', $request->radiosingle);
+        };
+
         $_contents = $request->contents;
         $imageload = new imageload($_base64,$_fe,'GreenPetSingle','');
         $imageload->webimg();
+        $newid = (String) new ObjectID;
 
-        if($type == ""){
+        if($id == ""){
             $SaveToDB = [
+                'sid' => $newid,
                 'title' => $_title,
                 'link' => (is_null($_link) == true)? "null" : $_link,
                 'picjson' => [
@@ -149,12 +215,13 @@ class GreenPetNotifiSingleController extends Controller
                     'id' => $_gender[1]
                 ],
                 'contents' => $_contents,
-                'notifi' => 0
+                'notifi' => 0,
+                'path' => 'GreenPetSingle',
+                'depth' => $depth
             ];
-
-            GreenPetSingleNotifi::create($SaveToDB);
+            GreenPetGroupNotifi::create($SaveToDB);
         }else{
-            $greenpetgroupnotifis = GreenPetSingleNotifi::findOrFail($id);
+            $greenpetgroupnotifis = GreenPetGroupNotifi::findOrFail($id);
 
             $greenpetgroupnotifis->title = $_title;
             $greenpetgroupnotifis->link = (is_null($_link) == true)? "null" : $_link;

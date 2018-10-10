@@ -169,15 +169,15 @@
                                         ?>
                                         @foreach($TmpViewarray['four'] as $gender)
                                             <?php
-                                            if( ($gender['type'].'_'.$gender['id'] == "gender_0" ) ){
+                                            if( ($gender['type'].'_'.$gender['id'] == "gender_2" ) ){
                                                 $status = 1;
                                                 break;
                                             }
                                             ?>
                                         @endforeach
-                                        <input {{ ($status == "1")?"checked":"" }} type="checkbox" name="CheckGroup[]" value="gender_0">
+                                        <input {{ ($status == "1")?"checked":"" }} type="checkbox" name="CheckGroup[]" value="gender_2">
                                     </div>
-                                    <input id="gender0" value="女性" style="text-align: center;" type="text" class="form-control" disabled="true">
+                                    <input id="gender2" value="女性" style="text-align: center;" type="text" class="form-control" disabled="true">
                                 </div>
                             </div>
 

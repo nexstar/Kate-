@@ -20,6 +20,7 @@ class GreenPetSlideController extends Controller
                     'queue' => $slideslist->queue,
                     'src' => $getbase64,
                     'fe' => $slideslist->fe,
+                    'link' => $slideslist->link
                 )
             );
         };
@@ -27,8 +28,11 @@ class GreenPetSlideController extends Controller
     }
 
     public function store(Request $request,$id){
+
+
         $_slidesrc = $request->slidesrc;
         $_slidefe  = $request->slidefe;
+        $_slidelink = $request->slidelink;
 
         $updateslide = GreenPetSlide::findOrFail($id);
         imageload::rmpic('GreenPetSlide', $updateslide->src);
@@ -38,6 +42,7 @@ class GreenPetSlideController extends Controller
 
         $updateslide->src = $imageload->geturl();
         $updateslide->fe = $_slidefe;
+        $updateslide->link = $_slidelink;
         $updateslide->update();
 
         return redirect()->back();

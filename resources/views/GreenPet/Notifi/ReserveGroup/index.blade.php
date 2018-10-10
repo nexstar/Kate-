@@ -32,37 +32,43 @@
                                     <th>名稱</th>
                                     <th>內容</th>
                                     <th>預約時段</th>
+                                    <th>已讀/總量</th>
                                     <th>動作</th>
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                @foreach($greenpetgroupnotifis as $reslut)
+                                @for($i=0;$i<count($ReserveGroup);$i++)
                                     <tr style="cursor: default;">
                                         <td style="width:25%;">
-                                            <img src="{{ url('images/GreenPetReserveGroup/'.$reslut->picjson['src']) }}" style="width: 100%;">
+                                            <img src="{{ url('images/GreenPetReserveGroup/'.$ReserveGroup[$i]['src']) }}" style="width: 100%;">
                                         </td>
-                                        <td style="width:20%;">{{ $reslut->title }}</td>
-                                        <td style="width:25%;">{{ $reslut->contents }}</td>
+                                        <td style="width:20%;">{{ $ReserveGroup[$i]['title'] }}</td>
+                                        <td style="width:25%;">{{ $ReserveGroup[$i]['contents'] }}</td>
                                         <td style="width:20%;">
-                                            <p>{{ $reslut['reservemdh']['m'].'月'.$reslut['reservemdh']['d'].'日'.$reslut['reservemdh']['h'].'時' }}</p>
+                                            <p>{{ $ReserveGroup[$i]['reservemdh']['m'].'月'.$ReserveGroup[$i]['reservemdh']['d'].'日'.$ReserveGroup[$i]['reservemdh']['h'].'時' }}</p>
                                         </td>
+                                        @if(count($ReserveGroup[$i]['notifi']) >= 1)
+                                            <td style="width:25%;">{{ $ReserveGroup[$i]['read'].'/'.$ReserveGroup[$i]['total'] }}</td>
+                                        @else
+                                            <td style="width:25%;">預約期未到</td>
+                                        @endif
                                         <td style="width:30%;">
-                                            @if($reslut['link'] != "null")
-                                                <a href="{{ $reslut['link'] }}" target="_blank" type="button" class="btn btn-block btn-primary">連結</a>
+                                            @if($ReserveGroup[$i]['link'] != "null")
+                                                <a href="{{ $ReserveGroup[$i]['link'] }}" target="_blank" type="button" class="btn btn-block btn-primary">連結</a>
                                             @else
                                                 <a disabled type="button" class="btn btn-block btn-primary">沒連結</a>
                                             @endif
-                                            <a href="{{ route('greenpetnotifireservegroup.info', $reslut->_id) }}" style="border-color: #9db782;background-color: #9db782;" type="button" class="btn btn-block btn-primary">資訊</a>
+                                            <a href="{{ route('greenpetnotifireservegroup.info', $ReserveGroup[$i]['id'] ) }}" style="border-color: #9db782;background-color: #9db782;" type="button" class="btn btn-block btn-primary">資訊</a>
                                             {!! Form::open([
-                                                'id' => ('rmnotifigroup'.$reslut->_id), 'method' => 'DELETE',
-                                                'action' => ['GreenPetNotifiReserveGroupController@destroy',$reslut->_id]])
+                                                'id' => ('rmnotifigroup'.$ReserveGroup[$i]['id']), 'method' => 'DELETE',
+                                                'action' => ['GreenPetNotifiReserveGroupController@destroy',$ReserveGroup[$i]['id']]])
                                             !!}
                                             {!! Form::close() !!}
-                                            <button onclick="btnrmnotifigroup('{{ $reslut->_id }}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
-                                            <a href="{{ route('greenpetnotifireservegroup.edit', $reslut->_id) }}" class="btn btn-block btn-warning">修改</a>
+                                            <button onclick="btnrmnotifigroup('{{ $ReserveGroup[$i]['id'] }}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
+                                            <a href="{{ route('greenpetnotifireservegroup.edit', $ReserveGroup[$i]['id']) }}" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endfor
                                 </tbody>
                             </table>
                         </div>

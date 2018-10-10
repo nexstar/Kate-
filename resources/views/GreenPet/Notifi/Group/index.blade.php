@@ -31,44 +31,52 @@
                                     <th>照片</th>
                                     <th>名稱</th>
                                     <th>內容</th>
+                                    <th>已讀/總量</th>
                                     <th>動作</th>
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                @foreach($greenpetgroupnotifis as $reslut)
+                                @for($i=0;$i<count($greenpetgroupnotifis);$i++)
                                     <tr style="cursor: default;">
                                         <td style="width:25%;">
-                                            <img src="{{ url('images/GreenPetGroup/'.$reslut->picjson['src']) }}" style="width: 100%;">
+                                            <img src="{{ url('images/GreenPetGroup/'.$greenpetgroupnotifis[$i]['src']) }}" style="width: 100%;">
                                         </td>
-                                        <td style="width:25%;">{{ $reslut->title }}</td>
-                                        <td style="width:25%;">{{ $reslut->contents }}</td>
+                                        <td style="width:25%;">{{ $greenpetgroupnotifis[$i]['title'] }}</td>
+                                        <td style="width:25%;">{{ $greenpetgroupnotifis[$i]['contents'] }}</td>
+                                        @if($greenpetgroupnotifis[$i]['notifi'])
+                                            <td style="width:25%;">{{ $greenpetgroupnotifis[$i]['read'].'/'.$greenpetgroupnotifis[$i]['total'] }}</td>
+                                        @else
+                                            <td style="width:25%;">尚未發送</td>
+                                        @endif
                                         <td style="width:10%;">
-                                            @if($reslut->notifi)
+                                            @if($greenpetgroupnotifis[$i]['notifi'])
                                                 <button disabled type="button" class="btn btn-block btn-primary">已發送</button>
                                             @else
                                                 {!! Form::open([
-                                                    'id' => ('sendnotifigroup'.$reslut->_id), 'method' => 'GET',
-                                                    'action' => ['GreenPetNotifiGroupController@notifi',$reslut->_id]])
+                                                    'id' => ('sendnotifigroup'.$greenpetgroupnotifis[$i]['id']), 'method' => 'GET',
+                                                    'action' => ['GreenPetNotifiGroupController@notifi',$greenpetgroupnotifis[$i]['id']]])
                                                 !!}
                                                 {!! Form::close() !!}
-                                                <button onclick="btnsendnotifigroup('{{ $reslut->_id }}')" type="button" class="btn btn-block btn-primary">發送</button>
+                                                <button onclick="btnsendnotifigroup('{{ $greenpetgroupnotifis[$i]['id'] }}')" type="button" class="btn btn-block btn-primary">發送</button>
                                             @endif
-                                            @if($reslut['link'] != "null")
-                                                <a href="{{ $reslut['link'] }}" style="border-color: #84bcd8;background-color: #84bcd8;" target="_blank" type="button" class="btn btn-block btn-primary">連結</a>
+
+                                            @if($greenpetgroupnotifis[$i]['link'] != "null")
+                                                <a href="{{ $greenpetgroupnotifis[$i]['link'] }}" style="border-color: #84bcd8;background-color: #84bcd8;" target="_blank" type="button" class="btn btn-block btn-primary">連結</a>
                                             @else
                                                 <a href="#" disabled type="button" style="border-color: #84bcd8;background-color: #84bcd8;" class="btn btn-block btn-primary">沒連結</a>
                                             @endif
-                                            <a href="{{ route('greenpetnotifigroup.info', $reslut->_id) }}" style="border-color: #9db782;background-color: #9db782;" type="button" class="btn btn-block btn-primary">資訊</a>
+
+                                            <a href="{{ route('greenpetnotifigroup.info', $greenpetgroupnotifis[$i]['id']) }}" style="border-color: #9db782;background-color: #9db782;" type="button" class="btn btn-block btn-primary">資訊</a>
                                             {!! Form::open([
-                                                'id' => ('rmnotifigroup'.$reslut->_id), 'method' => 'DELETE',
-                                                'action' => ['GreenPetNotifiGroupController@destroy',$reslut->_id]])
+                                                'id' => ('rmnotifigroup'.$greenpetgroupnotifis[$i]['id']), 'method' => 'DELETE',
+                                                'action' => ['GreenPetNotifiGroupController@destroy', $greenpetgroupnotifis[$i]['id']]])
                                             !!}
                                             {!! Form::close() !!}
-                                            <button onclick="btnrmnotifigroup('{{ $reslut->_id }}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
-                                            <a href="{{ route('greenpetnotifigroup.edit', $reslut->_id) }}" class="btn btn-block btn-warning">修改</a>
+                                            <button onclick="btnrmnotifigroup('{{ $greenpetgroupnotifis[$i]['id'] }}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
+                                            <a href="{{ route('greenpetnotifigroup.edit', $greenpetgroupnotifis[$i]['id']) }}" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endfor
                                 </tbody>
                             </table>
                         </div>

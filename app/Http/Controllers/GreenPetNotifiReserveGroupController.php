@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\appwebuser;
+use App\getnotifiread;
 use App\petbigitem;
 use App\petsmallitem;
 use Illuminate\Http\Request;
 use App\imageload;
 use App\GreenPetGroupNotifi;
-
+use MongoDB\BSON\ObjectID as ObjectID;
 class GreenPetNotifiReserveGroupController extends Controller
 {
     public function show($id){}
@@ -36,8 +37,27 @@ class GreenPetNotifiReserveGroupController extends Controller
 
     public function index()
     {
-        $greenpetgroupnotifis = GreenPetGroupNotifi::where('reservemdh','<>','null')->orderBy('created_at','desc')->get();
-        return view('GreenPet.Notifi.ReserveGroup.index',compact('greenpetgroupnotifis'));
+        $fiterGroup = GreenPetGroupNotifi::where('reservemdh','<>','null')->orderBy('created_at','desc')->get();
+
+        $ReserveGroup = [];
+        foreach ($fiterGroup as $result){
+            if( $result->path == "GreenPetReserveGroup"){
+                $notifireadinfo = new getnotifiread($result->sid);
+                array_push($ReserveGroup,array(
+                    'id' => $result->_id,
+                    'link' => $result->link,
+                    'src' => $result->picjson['src'],
+                    'title' => $result->title,
+                    'contents' => $result->contents,
+                    'reservemdh' => $result->reservemdh,
+                    'notifi' => $result->notifi,
+                    'read' => $notifireadinfo->read(),
+                    'total' => $notifireadinfo->total()
+                ));
+            };
+        };
+
+        return view('GreenPet.Notifi.ReserveGroup.index',compact('ReserveGroup'));
     }
 
     public function create()
@@ -102,7 +122,7 @@ class GreenPetNotifiReserveGroupController extends Controller
         $_day      = $request->modelday;
         $_hour     = $request->modelhour;
         $_contents = $request->contents;
-
+        $newid = (String) new ObjectID;
         $imageload = new imageload($_base64,$_fe,'GreenPetReserveGroup','');
         $imageload->webimg();
 
@@ -116,6 +136,7 @@ class GreenPetNotifiReserveGroupController extends Controller
 
         if($type == ""){
             $SaveToDB = [
+                'sid' => $newid,
                 'title' => $_title,
                 'link' => (is_null($_link) == true)? "null" : $_link,
                 'picjson' => [
@@ -129,7 +150,8 @@ class GreenPetNotifiReserveGroupController extends Controller
                 ],
                 'fouritem' => $CheckGroupHub,
                 'contents' => $_contents,
-                'notifi' => []
+                'notifi' => [],
+                'path' => 'GreenPetReserveGroup'
             ];
 
             GreenPetGroupNotifi::create($SaveToDB);

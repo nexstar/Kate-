@@ -15,6 +15,7 @@ class CreateGreenPetGroupNotifisTable extends Migration
     {
         Schema::create('green_pet_group_notifis', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('sid');
             $table->string('title');
             $table->string('link');
             $table->string('picjson');
@@ -22,6 +23,8 @@ class CreateGreenPetGroupNotifisTable extends Migration
             $table->string('fouritem');
             $table->string('contents');
             $table->string('notifi');
+            $table->string('path');
+            $table->string('depth');
             $table->timestamps();
         });
     }

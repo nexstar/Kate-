@@ -68,6 +68,9 @@
                     <li>
                         <a style="color:black;" href="{{ url('greenpetnotifireservegroup') }}">(群/預)訊推送</a>
                     </li>
+                    <li>
+                        <a style="color:black;" href="{{ url('fblive') }}">臉書直播</a>
+                    </li>
                 </ul>
             </li>
         </ul>

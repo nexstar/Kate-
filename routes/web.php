@@ -4,6 +4,43 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//用戶新增測試
+//Route::get('/TestInsertUser', [
+//    'as' => 'TestInsertUser',
+//    'uses' => 'UserController@TestInsertUser'
+//]);
+
+Route::resource('/fblive','fblivecontroller');
+
+Route::get('/fblive/fbclose/{id}/{number}',[
+    'as' => 'fblive.fbclose',
+    'uses' => 'fblivecontroller@fbclose',
+]);
+
+//Login OK
+    Route::post('/login', [
+        'as' => 'logon',
+        'uses' => 'UserController@login'
+    ])->name('UserController.login');
+
+//GreenPet picload
+    Route::post('/jnadbase64upload',[
+        'as' => 'jnadtoken.upload',
+        'uses' => 'jnadtokenController@upload',
+    ]);
+
+    Route::get('/rmpic/{id}',[
+        'as' => 'jnadtoken.rmpic',
+        'uses' => 'jnadtokenController@rmpic',
+    ]);
+
+//SmsVerify
+    Route::post('/smsserify',[
+        'as' => 'sms.smsverify',
+        'uses' => 'SmsController@smsverify',
+    ]);
+
+
 Route::group([ 'middleware' => ['logonauth'] ], function(){
 //GreenPet
     //部落格
@@ -25,6 +62,11 @@ Route::group([ 'middleware' => ['logonauth'] ], function(){
     Route::get('/greenpetnotifisingle/notifi/{id}',[
         'as' => 'greenpetnotifisingle.notifi',
         'uses' => 'GreenPetNotifiSingleController@notifi'
+    ]);
+
+    Route::post('/greenpetnotifisingle/depth}',[
+        'as' => 'greenpetnotifisingle.depth',
+        'uses' => 'GreenPetNotifiSingleController@depth'
     ]);
 
     //訊息通知(單-預約)
@@ -73,17 +115,6 @@ Route::group([ 'middleware' => ['logonauth'] ], function(){
             'uses' => 'GreenPetSlideController@store',
         ]);
     });
-
-//GreenPet picload
-    Route::post('/jnadbase64upload',[
-        'as' => 'jnadtoken.upload',
-        'uses' => 'jnadtokenController@upload',
-    ]);
-
-    Route::get('/rmpic/{id}',[
-        'as' => 'jnadtoken.rmpic',
-        'uses' => 'jnadtokenController@rmpic',
-    ]);
 
 //數據中心
     Route::get('OnlineDataCenterPage',
@@ -223,18 +254,6 @@ Route::group([ 'middleware' => ['logonauth'] ], function(){
         'as' => 'onlinedatacenternetworktrafficD',
         'uses' => 'OnlineDataCenterNetworkTrafficController@d'
     ]);
-
-//用戶新增測試
-    Route::get('/TestInsertUser', [
-        'as' => 'TestInsertUser',
-        'uses' => 'UserController@TestInsertUser'
-    ]);
-
-    //Login OK
-    Route::post('/login', [
-		'as' => 'logon',
-		'uses' => 'UserController@login'
-	])->name('UserController.login');
 
 //初始middleware.logonauth
 	Route::get('/success', [

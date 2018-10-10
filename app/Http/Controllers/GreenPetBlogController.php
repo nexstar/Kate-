@@ -5,24 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\imageload;
 use App\GreenPetBlog;
+use App\appwebuserelempush;
+use App\appwebuser;
+use MongoDB\BSON\ObjectID as ObjectID;
 
 class GreenPetBlogController extends Controller
 {
     public function show($id){}
 
     public function sendNotifi($id){
-        $SaveToGreenPetBlogUser = [
-            'id' => $id,
-            'favorite' => 0,
-            'linked' => 0,
-        ];
+        $Singles = GreenPetBlog::findOrFail($id);
 
-        // $SaveToGreenPetBlogUser 寫入每位User > 綠寵物Blog Elem
-//        dd($SaveToGreenPetBlogUser);
+        $getalluser = appwebuser::all();
 
-        $greenpetblog = GreenPetBlog::findOrFail($id);
-        $greenpetblog->notifi = 1;
-        $greenpetblog->update();
+        $AllUserarray = [];
+        foreach ($getalluser as $list){
+            array_push($AllUserarray,$list->_id);
+        };
+
+        //Insert To appwebuser and Send Notifi
+        $elempush = new appwebuserelempush('', $AllUserarray, $Singles->title);
+        $elempush->greenpet_blog();
+
+        // finish Single Notifi Send
+        $Singles->notifi = 1;
+        $Singles->update();
         return redirect()->back();
     }
 
@@ -34,7 +41,6 @@ class GreenPetBlogController extends Controller
 
     public function create()
     {
-
         return view('GreenPet.Blog.create');
     }
 
@@ -84,12 +90,13 @@ class GreenPetBlogController extends Controller
     public function create_update(Request $request, $id){
         $src = $request->imagesrcupload;
         $fe  = $request->imagesrcuploadFe;
-
+        $newid = (String) new ObjectID;
         $imageload = new imageload($src, $fe,'GreenPetBlog','');
         $imageload->webimg();
 
         if($id == ""){
             $SaveToDB = [
+                'sid' => $newid,
                 'title' => $request->title,
                 'link' => ($request->link == "")? "沒有連結" : "$request->link",
                 'src' => $imageload->geturl(),

@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\GreenPetGroupNotifi;
 use App\imageload;
 use Illuminate\Support\Facades\Session;
+use MongoDB\BSON\ObjectID as ObjectID;
+use App\getnotifiread;
 
 class GreenPetNotifiGroupController extends Controller
 {
@@ -62,7 +64,7 @@ class GreenPetNotifiGroupController extends Controller
         };
 
         //Insert To appwebuser and Send Notifi
-        $elempush = new appwebuserelempush($id, array_unique($AllUserarray), $Singles->title);
+        $elempush = new appwebuserelempush($Singles->sid, array_unique($AllUserarray), $Singles->title);
         $elempush->greenpet_notifi();
 
         // finish Single Notifi Send
@@ -74,7 +76,25 @@ class GreenPetNotifiGroupController extends Controller
 
     public function index()
     {
-        $greenpetgroupnotifis = GreenPetGroupNotifi::where('reservemdh','=','null')->orderBy('created_at','desc')->get();
+        $fiterGroup = GreenPetGroupNotifi::where('reservemdh','=','null')->orderBy('created_at','desc')->get();
+
+        $greenpetgroupnotifis = [];
+        foreach ($fiterGroup as $result){
+            if( $result->path == "GreenPetGroup"){
+                $notifireadinfo = new getnotifiread($result->sid);
+                array_push($greenpetgroupnotifis,array(
+                    'id' => $result->_id,
+                    'link' => $result->link,
+                    'src' => $result->picjson['src'],
+                    'title' => $result->title,
+                    'contents' => $result->contents,
+                    'notifi' => $result->notifi,
+                    'read' => $notifireadinfo->read(),
+                    'total' => $notifireadinfo->total()
+                ));
+            };
+        };
+
         return view('GreenPet.Notifi.Group.index',compact('greenpetgroupnotifis'));
     }
 
@@ -137,7 +157,7 @@ class GreenPetNotifiGroupController extends Controller
         $_base64   = $request->imagesrcupload;
         $_fe       = $request->imagesrcuploadFe;
         $_contents = $request->contents;
-
+        $newid = (String) new ObjectID;
         $imageload = new imageload($_base64,$_fe,'GreenPetGroup','');
         $imageload->webimg();
 
@@ -151,6 +171,7 @@ class GreenPetNotifiGroupController extends Controller
 
         if($type == ""){
             $SaveToDB = [
+                'sid' => $newid,
                 'title' => $_title,
                 'link' => (is_null($_link) == true)? "null" : $_link,
                 'picjson' => [
@@ -160,7 +181,8 @@ class GreenPetNotifiGroupController extends Controller
                 'reservemdh' => "null",
                 'fouritem' => $CheckGroupHub,
                 'contents' => $_contents,
-                'notifi' => 0
+                'notifi' => 0,
+                'path' => 'GreenPetGroup'
             ];
             GreenPetGroupNotifi::create($SaveToDB);
         }else{

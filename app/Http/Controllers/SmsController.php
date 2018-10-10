@@ -20,6 +20,22 @@ class SmsController extends Controller
 		$this->SmsCount = file_get_contents($url);
 	}
 
+	public function smsverify(Request $request){
+        $_phone      = $request->phone;
+        $_verifycode = $request->code;
+        $url  = "https://oms.every8d.com/API21/HTTP/sendSMS.ashx?";
+        $url .= "UID=".$this->users->smsname;
+        $url .= "&PWD=".$this->users->smspwd;
+        $url .= "&MSG=".urlencode("綠寵物簡訊驗證碼:".$_verifycode);
+        $url .= "&DEST=".$_phone;
+//        file_get_contents($url);
+        return response()->json(
+            [
+                'status' => '1|ok'
+            ]
+        );
+    }
+
 	public function Send(Request $request){
 
 		$contents = urlencode($request->contents);

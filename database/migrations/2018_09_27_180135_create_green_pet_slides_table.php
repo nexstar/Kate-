@@ -18,6 +18,7 @@ class CreateGreenPetSlidesTable extends Migration
             $table->string('queue');
             $table->string('src');
             $table->string('fe');
+            $table->string('link');
             $table->timestamps();
         });
     }

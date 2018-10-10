@@ -43,7 +43,7 @@
                 </div>
 
                 {{-- 綠寵物種類 --}}
-                    <div class="col-md-12">
+                <div class="col-md-12">
                     <div class="form-group">
                         <p>綠寵物種類</p>
                         <div style="border:1px solid #dddddd;height: 120px;overflow-y: scroll;">
@@ -88,9 +88,9 @@
                             <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
                                 <div class="input-group">
                                     <div class="input-group-addon">
-                                        <input type="radio" name="radiosingle" value="gender_0">
+                                        <input type="radio" name="radiosingle" value="gender_2">
                                     </div>
-                                    <input id="gender1" value="女性" style="text-align: center;" type="text" class="form-control" disabled="true">
+                                    <input id="gender2" value="女性" style="text-align: center;" type="text" class="form-control" disabled="true">
                                 </div>
                             </div>
                             <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">

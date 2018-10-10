@@ -11,6 +11,6 @@ class GreenPetSlide extends Moloquent
     protected $primaryKey = '_id';
 
     protected $fillable = [
-        'queue','src','fe'
+        'queue','src','fe','link'
     ];
 }

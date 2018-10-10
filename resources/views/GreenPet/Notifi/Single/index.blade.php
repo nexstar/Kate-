@@ -31,47 +31,58 @@
                                     <th>照片</th>
                                     <th>標題</th>
                                     <th>內容</th>
+                                    <th>已讀/總量</th>
                                     <th>動作</th>
                                 </tr>
                                 </thead>
                                 <tbody id="main_table_tbody">
-                                    @foreach($single as $singlelist)
+                                    @for($i=0;$i<count($greenpetsinglenotifis);$i++)
                                     <tr style="cursor: default;">
                                         <td style="width:20%;">
-                                            <img src="{{ url('images/GreenPetSingle/'.$singlelist->picjson['src']) }}" style="width:100%;">
+                                            <img src="{{ url('images/GreenPetSingle/'.$greenpetsinglenotifis[$i]['src']) }}" style="width:100%;">
                                         </td>
-                                        <td style="width:20%;">{{ $singlelist->title }}</td>
-                                        <td style="width:20%;">{{ $singlelist->contents }}</td>
                                         <td style="width:20%;">
-
-                                            @if($singlelist->notifi)
+                                            <p>{{ (( $greenpetsinglenotifis[$i]['depth'] == "")?"":"(進階)") }}</p>
+                                            <p>{{ $greenpetsinglenotifis[$i]['title'] }}</p>
+                                        </td>
+                                        <td style="width:20%;">{{ $greenpetsinglenotifis[$i]['contents'] }}</td>
+                                        @if($greenpetsinglenotifis[$i]['notifi'])
+                                            <td style="width:25%;">{{ $greenpetsinglenotifis[$i]['read'].'/'.$greenpetsinglenotifis[$i]['total'] }}</td>
+                                        @else
+                                            <td style="width:25%;">尚未發送</td>
+                                        @endif
+                                        <td style="width:20%;">
+                                            @if($greenpetsinglenotifis[$i]['notifi'])
+                                                @if( $greenpetsinglenotifis[$i]['read'] >= 1 )
+                                                    <a href="{{ route('greenpetnotifisingle.show',$greenpetsinglenotifis[$i]['id']) }}" class="btn btn-block btn-info">進階發送</a>
+                                                @endif
                                                 <button disabled type="button" class="btn btn-block btn-primary">已發送</button>
                                             @else
                                                 {!! Form::open([
-                                                    'id' => ('sendnotifisingle'.$singlelist->_id), 'method' => 'GET',
-                                                    'action' => ['GreenPetNotifiSingleController@notifi',$singlelist->_id]])
+                                                    'id' => ('sendnotifisingle'.$greenpetsinglenotifis[$i]['id']), 'method' => 'GET',
+                                                    'action' => ['GreenPetNotifiSingleController@notifi',$greenpetsinglenotifis[$i]['id'] ]])
                                                 !!}
                                                 {!! Form::close() !!}
-                                                <button onclick="btnsendnotifisingle('{{ $singlelist->_id }}')" type="button" class="btn btn-block btn-primary">發送</button>
+                                                <button onclick="btnsendnotifisingle('{{ $greenpetsinglenotifis[$i]['id'] }}')" type="button" class="btn btn-block btn-primary">發送</button>
                                             @endif
 
-                                            @if($singlelist->link != "null")
-                                                <a href="{{ $singlelist->link }}" style="border-color: #84bcd8;background-color: #84bcd8;" target="_blank" type="button" class="btn btn-block btn-primary">連結</a>
+                                            @if($greenpetsinglenotifis[$i]['link'] != "null")
+                                                <a href="{{ $greenpetsinglenotifis[$i]['link'] }}" style="border-color: #84bcd8;background-color: #84bcd8;" target="_blank" type="button" class="btn btn-block btn-primary">連結</a>
                                             @else
                                                 <a disabled type="button" style="border-color: #84bcd8;background-color: #84bcd8;" class="btn btn-block btn-primary">沒連結</a>
                                             @endif
 
-                                            <a href="{{ route('greenpetnotifisingle.info', $singlelist->_id) }}" style="border-color: #9db782;background-color: #9db782;" type="button" class="btn btn-block btn-primary">資訊</a>
+                                            <a href="{{ route('greenpetnotifisingle.info',  $greenpetsinglenotifis[$i]['id'] ) }}" style="border-color: #9db782;background-color: #9db782;" type="button" class="btn btn-block btn-primary">資訊</a>
                                             {!! Form::open([
-                                                'id' => ('rmnotifisingle'.$singlelist->_id), 'method' => 'DELETE',
-                                                'action' => ['GreenPetNotifiSingleController@destroy',$singlelist->_id]])
+                                                'id' => ('rmnotifisingle'.$greenpetsinglenotifis[$i]['id'] ), 'method' => 'DELETE',
+                                                'action' => ['GreenPetNotifiSingleController@destroy',$greenpetsinglenotifis[$i]['id'] ]])
                                             !!}
                                             {!! Form::close() !!}
-                                            <button onclick="btnrmnotifisingle('{{ $singlelist->_id }}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
-                                            <a href="{{ route('greenpetnotifisingle.edit', $singlelist->_id) }}" class="btn btn-block btn-warning">修改</a>
+                                            <button onclick="btnrmnotifisingle('{{ $greenpetsinglenotifis[$i]['id'] }}')" type="button" style="margin-top: 5px;" class="btn btn-block btn-danger">刪除</button>
+                                            <a href="{{ route('greenpetnotifisingle.edit', $greenpetsinglenotifis[$i]['id'] ) }}" class="btn btn-block btn-warning">修改</a>
                                         </td>
                                     </tr>
-                                    @endforeach
+                                    @endfor
                                 </tbody>
                             </table>
                         </div>

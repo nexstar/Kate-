@@ -15,6 +15,7 @@ class CreateGreenPetBlogsTable extends Migration
     {
         Schema::create('green_pet_blogs', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('sid');
             $table->string('title');
             $table->string('src');
             $table->string('fe');

@@ -142,9 +142,9 @@
                             <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">
                                 <div class="input-group">
                                     <div class="input-group-addon">
-                                        <input {{ ( ($TmpViewarray['four']['type'].'_'.$TmpViewarray['four']['id']) == "gender_0" ) ? "checked" : "" }} type="radio" name="radiosingle" value="gender_0">
+                                        <input {{ ( ($TmpViewarray['four']['type'].'_'.$TmpViewarray['four']['id']) == "gender_2" ) ? "checked" : "" }} type="radio" name="radiosingle" value="gender_2">
                                     </div>
-                                    <input id="gender1" value="女性" style="text-align: center;" type="text" class="form-control" disabled="true">
+                                    <input id="gender2" value="女性" style="text-align: center;" type="text" class="form-control" disabled="true">
                                 </div>
                             </div>
                             <div class="col-md-3" style="margin: 15px 0px 10px 0px;text-align: center;">

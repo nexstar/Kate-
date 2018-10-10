@@ -27,6 +27,12 @@
                         <div class="col-md-4" style="text-align: center;">
                             <div class="thumbnail">
                                 <span>{{ $i+1 }}號.幻燈片</span>
+                                @if($slidesArray[$i]['link'] == "")
+                                    <span>無連結</span>
+                                @else
+                                    <a href="{{ $slidesArray[$i]['link'] }}">有連結</a>
+                                @endif
+                                <input id="slidelink{{ ($slidesArray[$i]['id']) }}" name="slidelink" type="hidden" value="{{ ($slidesArray[$i]['link']) }}" class="form-control">
                                 <img style="margin: 5px 0px;width: 100%;" src="{{ ($slidesArray[$i]['src']) }}" alt="#">
                                 <input id="slidesrc{{ ($slidesArray[$i]['id']) }}" name="slidesrc" type="hidden" value="{{ ($slidesArray[$i]['src']) }}">
                                 <input id="slidefe{{ ($slidesArray[$i]['id']) }}" name="slidefe" type="hidden" value="{{ ($slidesArray[$i]['fe']) }}">
@@ -43,13 +49,16 @@
                                     <h4 class="modal-title">修改幻燈片</h4>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row" style="margin-bottom: 2px;">
+                                    <div class="row" style="margin-bottom: 5px;">
                                         <div class="col-md-12">
                                             <input id="slidemodalpicload" type="file" accept="image/*" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <img id="slidemodalimg" src="http://placehold.it/1170x613" style="width: 100%;height: 210px;margin-bottom: 1px;">
+                                        <input id="slidemodallink" name="slidemodallink" type="text" value="" class="form-control" placeholder="請輸入連結">
+                                    </div>
+                                    <div class="form-group">
+                                        <img id="slidemodalimg" src="http://placehold.it/500x400" style="width: 100%;height: 370px;margin-bottom: 1px;">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -74,6 +83,7 @@
         var $slideid;
         function slidemodalsave() {
             if(confirm("確定修改幻燈片？？")){
+                $("#slidelink"+$slideid).val($("#slidemodallink").val());
                 $("#slide"+$slideid).submit();
             };
         }
@@ -81,7 +91,8 @@
         function slidejump($id) {
             $slideid = $id;
             $("#slidemodalpicload").val('');
-            $("#slidemodalimg").attr('src', "http://placehold.it/1170x613");
+            $("#slidemodallink").val('');
+            $("#slidemodalimg").attr('src', "http://placehold.it/500x400");
             $("#slidemodel").modal();
         };
 

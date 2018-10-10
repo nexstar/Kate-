@@ -3,19 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\appwebuser;
+use App\getnotifiread;
 use App\petbigitem;
 use App\petsmallitem;
 use Illuminate\Http\Request;
-use App\GreenPetSingleNotifi;
+use App\GreenPetGroupNotifi;
 use App\imageload;
-
+use MongoDB\BSON\ObjectID as ObjectID;
 class GreenPetNotifiReserveSingleController extends Controller
 {
 
     public function show($id){}
 
     public function info($id){
-        $Reservesingle = GreenPetSingleNotifi::findOrFail($id);
+        $Reservesingle = GreenPetGroupNotifi::findOrFail($id);
 
         $TmpViewarray = [
             'title' => $Reservesingle->title,
@@ -33,7 +34,26 @@ class GreenPetNotifiReserveSingleController extends Controller
 
     public function index()
     {
-        $ReserveSingle = GreenPetSingleNotifi::where('reservemdh','<>','null')->orderBy('created_at','desc')->get();
+        $fiterGroup = GreenPetGroupNotifi::where('reservemdh','<>','null')->orderBy('created_at','desc')->get();
+
+        $ReserveSingle = [];
+        foreach ($fiterGroup as $result){
+            if( $result->path == "GreenPetReserveSingle"){
+                $notifireadinfo = new getnotifiread($result->sid);
+                array_push($ReserveSingle,array(
+                    'id' => $result->_id,
+                    'link' => $result->link,
+                    'src' => $result->picjson['src'],
+                    'title' => $result->title,
+                    'contents' => $result->contents,
+                    'reservemdh' => $result->reservemdh,
+                    'notifi' => $result->notifi,
+                    'read' => $notifireadinfo->read(),
+                    'total' => $notifireadinfo->total()
+                ));
+            };
+        };
+
         return view('GreenPet.Notifi.ReserveSingle.index',compact('ReserveSingle'));
     }
 
@@ -53,7 +73,7 @@ class GreenPetNotifiReserveSingleController extends Controller
 
     public function edit($id)
     {
-        $EditGroup = GreenPetSingleNotifi::findOrFail($id);
+        $EditGroup = GreenPetGroupNotifi::findOrFail($id);
 
         $base64 = imageload::upimgpath('images/GreenPetReserveSingle/'.$EditGroup->picjson['src']);
 
@@ -84,7 +104,7 @@ class GreenPetNotifiReserveSingleController extends Controller
 
     public function destroy($id)
     {
-        $killGroup = GreenPetSingleNotifi::findOrFail($id);
+        $killGroup = GreenPetGroupNotifi::findOrFail($id);
         imageload::rmpic('GreenPetReserveSingle',$killGroup->picjson['src']);
         $killGroup->delete();
         return redirect()->back();
@@ -101,12 +121,13 @@ class GreenPetNotifiReserveSingleController extends Controller
         $_hour     = $request->modelhour;
         $_gender   = explode('_', $request->radiosingle);
         $_contents = $request->contents;
-
+        $newid = (String) new ObjectID;
         $imageload = new imageload($_base64,$_fe,'GreenPetReserveSingle','');
         $imageload->webimg();
 
         if($type == ""){
             $SaveToDB = [
+                'sid' => $newid,
                 'title' => $_title,
                 'link' => (is_null($_link) == true)? "null" : $_link,
                 'picjson' => [
@@ -123,12 +144,13 @@ class GreenPetNotifiReserveSingleController extends Controller
                     'id' => $_gender[1]
                 ],
                 'contents' => $_contents,
-                'notifi' => []
+                'notifi' => [],
+                'path' => 'GreenPetReserveSingle'
             ];
 
-            GreenPetSingleNotifi::create($SaveToDB);
+            GreenPetGroupNotifi::create($SaveToDB);
         }else{
-            $greenpetgroupnotifis = GreenPetSingleNotifi::findOrFail($id);
+            $greenpetgroupnotifis = GreenPetGroupNotifi::findOrFail($id);
 
             $greenpetgroupnotifis->title = $_title;
             $greenpetgroupnotifis->link = (is_null($_link) == true)? "null" : $_link;

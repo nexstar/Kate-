@@ -11,6 +11,6 @@ class GreenPetBlog extends Moloquent
     protected $primaryKey = '_id';
 
     protected $fillable = [
-        'title','src','fe','link','contents','notifi'
+        'sid','title','src','fe','link','contents','notifi'
     ];
 }

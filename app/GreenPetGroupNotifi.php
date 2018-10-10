@@ -11,6 +11,6 @@ class GreenPetGroupNotifi extends Moloquent
     protected $primaryKey = '_id';
 
     protected $fillable = [
-        'title','link','picjson','reservemdh','fouritem','contents','notifi'
+        'sid','title','link','picjson','reservemdh','fouritem','contents','notifi','path','depth'
     ];
 }
